@@ -1,4 +1,4 @@
-from AddressBook.addressbook_classes.contact import Contact
+from .addressbook_classes.contact import Contact
 
 
 def input_error(func):
