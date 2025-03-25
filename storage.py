@@ -8,6 +8,7 @@ FILENAMES = {
     "notes": "notes.pkl"
 }
 
+
 def load_data():
     try:
         with open(FILENAMES["addressbook"], "rb") as f:
@@ -23,8 +24,10 @@ def load_data():
 
     return book, notes
 
+
 def save_data():
     with open(FILENAMES["addressbook"], "wb") as f:
         pickle.dump(book, f)
     with open(FILENAMES["notes"], "wb") as f:
-        pickle.dump(notes, f)    #book, note будуть глобальними змінними у нашому основному файлі main.py
+        # book, note будуть глобальними змінними у нашому основному файлі main.py
+        pickle.dump(notes, f)
