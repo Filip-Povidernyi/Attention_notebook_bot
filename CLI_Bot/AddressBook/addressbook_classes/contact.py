@@ -1,8 +1,8 @@
-from name import Name
-from phone import Phone
-from email import Email
-from address import Address
-from birthday import Birthday
+from .address import Address
+from .birthday import Birthday
+from .email import Email
+from .name import Name
+from .phone import Phone
 
 
 class Contact:
@@ -20,14 +20,14 @@ class Contact:
         email_str = f", email: {self.email.value}" if self.email else ""
         return f"Contact name: {self.name.value.title()}, phones: {'; '.join(p.value for p in self.phones)}{birthday_str}{address_str}{email_str}"
 
-    def add_email(self, email):
+    def add_email(self, email: str):
         self.email = Email(email)
 
-    def add_phone(self, phone):
+    def add_phone(self, phone: str):
         self.phone.append(Phone(phone))
 
-    def add_address(self, address):
+    def add_address(self, address: str):
         self.address = Address(address)
 
-    def add_birthday(self, birthday):
+    def add_birthday(self, birthday: str):
         self.birthday = Birthday(birthday)

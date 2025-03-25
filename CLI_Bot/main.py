@@ -1,25 +1,30 @@
-def command_parser(command):
-
-    cmd, *args = command.split(' ')
-    cmd = cmd.strip().lower()
-
-    return cmd, args
+from AddressBook.addressbook_classes.addressbook_class import AddressBook
+from handler import add_contact
 
 
 def main():
 
     print("Hello! How i can help you?")
 
+    book = AddressBook()
+
     while True:
 
-        command_line = input("Enter a command: ").strip().lower()
-        cmd, args = command_parser(command_line)
+        cmd = input("Enter a command: ").strip().lower()
 
         if cmd == 'add':
-            pass
+            result = add_contact(book)
+            if result:
+                print(result)
+            else:
+                continue
 
         elif cmd == 'exit' or cmd == 'close':
-            pass
+            break
 
         else:
             print("Unknown command. Please try again.")
+
+
+if __name__ == '__main__':
+    main()
