@@ -1,4 +1,10 @@
+import atexit
+from .CLI_Bot.storage import save_data, load_data
 from CLI_Bot.AddressBook.addressbook_main import addressbook_main
+
+
+book, notes = load_data()
+atexit.register(save_data, book, notes) # Додав для автоматичного збереження перед виходом (говорив про дану бібліотеку на першому зідзвоні)
 
 
 def main():
@@ -12,7 +18,7 @@ def main():
         cmd = input("Enter a command: ").strip().lower()
 
         if cmd == '1':
-            addressbook_main()
+            addressbook_main(book)
 
         elif cmd == '2':
             pass
