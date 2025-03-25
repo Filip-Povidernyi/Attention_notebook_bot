@@ -1,4 +1,4 @@
-from addressbook_classes.field import Field
+from .field import Field
 import re
 
 
