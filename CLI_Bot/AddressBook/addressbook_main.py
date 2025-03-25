@@ -1,8 +1,8 @@
-from AddressBook.addressbook_classes.addressbook_class import AddressBook
-from handler import add_contact
+from .addressbook_classes.addressbook_class import AddressBook
+from .handler import add_contact
 
 
-def main():
+def addressbook_main():
 
     print("Hello! How i can help you?")
 
@@ -24,7 +24,3 @@ def main():
 
         else:
             print("Unknown command. Please try again.")
-
-
-if __name__ == '__main__':
-    main()
