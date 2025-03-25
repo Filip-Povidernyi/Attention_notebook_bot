@@ -6,7 +6,7 @@ from .AddressBook.addressbook_classes.addressbook_class import AddressBook
 
 
 FILENAMES = {
-    "addressbook": "addressbook.pkladdressbook.pkl",
+    "addressbook": "addressbook.pkl",
     "notes": "notes.pkl"
 }
 
