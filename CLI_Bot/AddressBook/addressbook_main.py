@@ -1,5 +1,6 @@
 from .addressbook_classes.addressbook_class import AddressBook
 from .handler import add_contact
+from src.contacts.birthdays import get_upcoming_birthdays
 
 
 def addressbook_main():
@@ -18,6 +19,9 @@ def addressbook_main():
                 print(result)
             else:
                 continue
+
+        elif cmd == "birthdays":
+            result = get_upcoming_birthdays()
 
         elif cmd == 'exit' or cmd == 'close':
             break
