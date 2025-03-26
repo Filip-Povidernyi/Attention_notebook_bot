@@ -37,7 +37,7 @@ def main():
             case "1":
                 contacts_main(book)
             case "2":
-                notes_main()
+                notes_main(notes)
             case "help":
                 print_help(commands)
             case "exit":

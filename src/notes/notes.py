@@ -29,7 +29,7 @@ def notes_main(notebook: Notebook):
     
     print("\n\nYou are in Notes now")
 
-    printHelp(commands)
+    print_help(commands)
     listNotes(notebook)
 
     while True:
