@@ -1,3 +1,5 @@
+from .classes.note_book import Notebook
+
 """
 Module for managing notes in the application.
 
@@ -18,15 +20,42 @@ def notes_main():
     print('To see a test message, enter "test"')
     print('\nTo go to the main menu, enter "exit" or "close"\n')
 
-    while True:
 
+    notebook = Notebook()
+
+    while True:
         cmd = input("Enter a command: ").strip().lower()
 
-        if cmd == "test":
-            print("This is a test stub message to check the notes function.")
+        match cmd:
+            case "add":
+                addNote(notebook)
+            case "search":
+                searchNotes(notebook)
+            case "edit":
+                editNote(notebook)
+            case "delete":
+                deleteNote(notebook)
+            case "test":
+                print("This is a test stub message to check the notes function.")
+            case "exit" | "close":
+                break
+            case _:
+                print("Unknown command. Please try again.")
+            
 
-        elif cmd in ("exit", "close"):
-            break
+def addNote(notebook: Notebook):
+    name = input("Enter note name: ").strip()
+    content = input("Enter note content: ")
 
-        else:
-            print("Unknown command. Please try again.")
+    notebook.addNote(name, content)
+
+def searchNotes(notebook: Notebook):
+    pass
+
+def editNote(notebook: Notebook):
+    pass
+
+def deleteNote(notebook: Notebook):
+    pass
+
+
