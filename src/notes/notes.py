@@ -29,6 +29,8 @@ def notes_main():
         match cmd:
             case "add":
                 addNote(notebook)
+            case "view":
+                viewNote(notebook)
             case "search":
                 searchNotes(notebook)
             case "edit":
@@ -46,16 +48,45 @@ def notes_main():
 def addNote(notebook: Notebook):
     name = input("Enter note name: ").strip()
     content = input("Enter note content: ")
+    note = notebook.addNote(name, content)
+    if note:
+        print(f"Note '{name}' added successfully.")
+    else:
+        print(f"Note '{name}' already exists.")
 
-    notebook.addNote(name, content)
+def viewNote(notebook: Notebook):
+    name = input("Enter note name: ").strip()
+    note = notebook.getNote(name)
+    if note:
+        print(note)
+    else:
+        print(f"Note '{name}' not found.")
 
 def searchNotes(notebook: Notebook):
-    pass
+    term = input("Enter search term: ").strip()
+    notes = notebook.searchNotes(term)
+    print(f"Found {len(notes)} notes matching the term '{term}'.")
+    for note in notes:
+        print(note)
 
 def editNote(notebook: Notebook):
-    pass
+    name = input("Enter note name: ").strip()
+    content = input("Enter new note content: ")
+    note = notebook.editNote(name, content)
+    if note:
+        print(f"Note '{name}' updated successfully.")
+    else:
+        print(f"Note '{name}' not found.")
 
 def deleteNote(notebook: Notebook):
-    pass
+    name = input("Enter note name: ").strip()
+    success = notebook.deleteNote(name)
+    if success:
+        print(f"Note '{name}' deleted successfully.")
+    else:
+        print(f"Note '{name}' not found.")
 
+def listNotes(notebook: Notebook):
+    for note in notebook.notes:
+        print(note)
 
