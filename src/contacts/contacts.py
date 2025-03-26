@@ -1,38 +1,55 @@
+from src.utils.common import print_help
 from .classes.contacts_book import ContactsBook
 from .handler import add_contact, delete_contact, show_all
+from .birthdays import get_upcoming_birthdays
 
+"""
+Module for managing contacts in the application.
+
+This module provides functionality to interact with and manage contacts.
+It includes a command-line interface (CLI) for performing actions with contacts.
+"""
 
 def contacts_main(book: ContactsBook):
     """
-    Main loop for managing contacts in the address book.
+    Main loop for managing contacts in the contacts book.
 
-    This function creates an instance of AddressBook and enters a loop where it waits for user 
-    input to perform actions.
+    This function uses an instance of ContactBook and enters a loop where it 
+    waits for user input to perform actions.
     """
 
-    print("\n\nYou are in Address Book now\n")
-    print('To Add New Contact, enter "add"\n')
-    print('To delete a contact, enter "delete"\n')
-    print('\nTo go to the main menu, enter "exit" or "close"\n')
+    commands = {
+        "add":          "Add a new contact",
+        "delete":       "Delete a contact",
+        "show-all":     "Show all contacts",
+        "birthdays":    "Show upcoming birthdays",
+        "help":         "Show this help",
+        "back":         "Go back to the main menu"
+    }
 
+    print("\n\nYou are in Address Book now")
+    print_help(commands)
+    
     while True:
 
-        cmd = input("Enter a command: ").strip().lower()
+        cmd = input("\nEnter a command (or 'help' for available commands): ").strip().lower()
 
-        if cmd == "add":
-            result = add_contact(book)
-            if result:
-                print(result)
-            else:
-                continue
-        if cmd == "delete":
-            print(delete_contact(book))
-
-        if cmd == "show-all":
-            show_all(book)
-
-        elif cmd in ["exit", "close"]:
-            break
-
-        else:
-            print("Unknown command. Please try again.")
+        match cmd:
+            case "add":
+                result = add_contact(book)
+                if result:
+                    print(result)
+                else:
+                    continue
+            case "delete":
+                print(delete_contact(book))
+            case "show-all":
+                show_all(book)
+            case "birthdays":
+                get_upcoming_birthdays()
+            case "help":
+                print_help(commands)
+            case "back":
+                break
+            case _:
+                print("Unknown command. Please try again.")

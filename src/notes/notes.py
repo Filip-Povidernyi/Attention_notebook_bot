@@ -1,3 +1,4 @@
+from src.utils.common import print_help
 from .classes.note_book import Notebook
 
 """
@@ -17,24 +18,24 @@ def notes_main():
     """
     
     commands = {
-        "add": "Add a new note",
-        "view": "View a note",
-        "search": "Search for a notes",
-        "edit": "Edit a note",
-        "delete": "Delete a note",
-        "exit": "Exit the notes section",
-        "help": "Show this help"
+        "add":      "Add a new note",
+        "view":     "View a note",
+        "search":   "Search for a notes",
+        "edit":     "Edit a note",
+        "delete":   "Delete a note",
+        "help":     "Show this help",
+        "back":     "Go back to the main menu"
     }
     
-    print("\n\nYou are in Notes now\n")
+    print("\n\nYou are in Notes now")
 
     notebook = Notebook()
     
-    printHelp(commands)
+    print_help(commands)
     listNotes(notebook)
 
     while True:
-        cmd = input("Enter a command: ").strip().lower()
+        cmd = input("\nEnter a command (or 'help' for available commands): ").strip().lower()
 
         match cmd:
             case "add":
@@ -51,8 +52,8 @@ def notes_main():
                 deleteNote(notebook)
                 listNotes(notebook)
             case "help":
-                printHelp(commands)
-            case "exit" | "close":
+                print_help(commands)
+            case "back":
                 break
             case _:
                 print("Unknown command. Please try again.")
@@ -103,8 +104,3 @@ def listNotes(notebook: Notebook):
     # TODO: pagination
     for note in notebook.notes:
         print(note)
-
-def printHelp(commands: dict[str, str]):
-    print('\nAvailable commands:')
-    for cmd, desc in commands.items():
-        print(f"  <{cmd}> - {desc}")
