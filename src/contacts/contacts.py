@@ -1,7 +1,8 @@
 from .classes.contacts_book import ContactsBook
 from .handler import add_contact
 
-def contacts_main():
+
+def contacts_main(book: ContactsBook):
     """
     Main loop for managing contacts in the address book.
 
@@ -9,12 +10,9 @@ def contacts_main():
     input to perform actions.
     """
 
-    book = ContactsBook()
-
     print("\n\nYou are in Address Book now\n")
     print('To Add New Contact, enter "add"')
     print('\nTo go to the main menu, enter "exit" or "close"\n')
-
 
     while True:
 
