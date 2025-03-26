@@ -9,7 +9,7 @@ It includes a command-line interface (CLI) for performing actions such as
 displaying test messages and exiting the program.
 """
 
-def notes_main():
+def notes_main(notebook: Notebook):
     """
     Main loop for managing notes in the application.
 
@@ -29,9 +29,7 @@ def notes_main():
     
     print("\n\nYou are in Notes now")
 
-    notebook = Notebook()
-    
-    print_help(commands)
+    printHelp(commands)
     listNotes(notebook)
 
     while True:
