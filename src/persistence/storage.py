@@ -17,13 +17,13 @@ def load_data():
         with open(FILENAMES["addressbook"], "rb") as f:
             book = pickle.load(f)
     except (FileNotFoundError, EOFError):
-        return ContactsBook()
+        book = ContactsBook()
 
     try:
         with open(FILENAMES["notes"], "rb") as f:
             notes = pickle.load(f)
     except (FileNotFoundError, EOFError):
-        return Notebook()
+        notes = Notebook()
 
     return book, notes
 

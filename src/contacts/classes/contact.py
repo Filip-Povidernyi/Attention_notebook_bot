@@ -9,7 +9,7 @@ class Contact:
     def __init__(self, name):
         self.name = Name(name)
         self.email = None
-        self.phone = []
+        self.phones = []
         self.address = None
         self.birthday = None
 
@@ -24,7 +24,7 @@ class Contact:
         self.email = Email(email)
 
     def add_phone(self, phone: str):
-        self.phone.append(Phone(phone))
+        self.phones.append(Phone(phone))
 
     def add_address(self, address: str):
         self.address = Address(address)
