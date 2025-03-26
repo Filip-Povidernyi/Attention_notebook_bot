@@ -30,7 +30,7 @@ def main():
             contacts_main(book)
 
         elif cmd == "2":
-            notes_main()
+            notes_main(notes)
 
         elif cmd in ("exit", "close"):
             print("Goodbye!")
