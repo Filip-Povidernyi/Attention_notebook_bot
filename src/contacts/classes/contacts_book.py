@@ -1,7 +1,7 @@
 from collections import UserDict
 
 
-class AddressBook(UserDict):
+class ContactsBook(UserDict):
 
     def add_contact(self, contact):
         self.data[contact.name.value] = contact
