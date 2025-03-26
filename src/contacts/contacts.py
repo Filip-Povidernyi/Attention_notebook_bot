@@ -1,5 +1,5 @@
 from .classes.contacts_book import ContactsBook
-from .handler import add_contact
+from .handler import add_contact, delete_contact, show_all
 
 
 def contacts_main(book: ContactsBook):
@@ -11,7 +11,8 @@ def contacts_main(book: ContactsBook):
     """
 
     print("\n\nYou are in Address Book now\n")
-    print('To Add New Contact, enter "add"')
+    print('To Add New Contact, enter "add"\n')
+    print('To delete a contact, enter "delete"\n')
     print('\nTo go to the main menu, enter "exit" or "close"\n')
 
     while True:
@@ -24,8 +25,13 @@ def contacts_main(book: ContactsBook):
                 print(result)
             else:
                 continue
+        if cmd == "delete":
+            print(delete_contact(book))
 
-        elif cmd in ("exit", "close"):
+        if cmd == "show-all":
+            show_all(book)
+
+        elif cmd in ["exit", "close"]:
             break
 
         else:

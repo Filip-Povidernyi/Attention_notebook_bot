@@ -10,14 +10,16 @@ def input_error(func):
 
         except ValueError as e:
             return str(e)
-
+        except KeyError as e:
+            return str(e)
     return inner
+
+
+exit_cmd = ('exit', 'close')
 
 
 @input_error
 def add_contact(book):
-
-    exit_cmd = ('exit', 'close')
 
     while True:
         try:
@@ -79,3 +81,24 @@ def add_contact(book):
     book.add_contact(contact)
 
     return f"Contact added successfully!"
+
+
+@input_error
+def delete_contact(book):
+
+    name = input("Enter a name: ").strip().lower()
+    if name in exit_cmd:
+        return None
+
+    if book.find(name):
+        book.delete(name)
+        return f"Contact {name} deleted successfully!"
+
+
+def show_all(book):
+
+    if not book.data:
+        return "No contacts in your phonebook"
+    else:
+        for record in book.data.values():
+            print(f"{record}")
