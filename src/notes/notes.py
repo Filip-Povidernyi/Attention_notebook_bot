@@ -1,3 +1,5 @@
+from .classes.note_book import Notebook
+
 """
 Module for managing notes in the application.
 
@@ -14,19 +16,95 @@ def notes_main():
     of the application. It provides options for displaying a test message and exiting the program.
     """
     
+    commands = {
+        "add": "Add a new note",
+        "view": "View a note",
+        "search": "Search for a notes",
+        "edit": "Edit a note",
+        "delete": "Delete a note",
+        "exit": "Exit the notes section",
+        "help": "Show this help"
+    }
+    
     print("\n\nYou are in Notes now\n")
-    print('To see a test message, enter "test"')
-    print('\nTo go to the main menu, enter "exit" or "close"\n')
+
+    notebook = Notebook()
+    
+    printHelp(commands)
+    listNotes(notebook)
 
     while True:
-
         cmd = input("Enter a command: ").strip().lower()
 
-        if cmd == "test":
-            print("This is a test stub message to check the notes function.")
+        match cmd:
+            case "add":
+                addNote(notebook)
+                listNotes(notebook)
+            case "view":
+                viewNote(notebook)
+            case "search":
+                searchNotes(notebook)
+            case "edit":
+                editNote(notebook)
+                listNotes(notebook)
+            case "delete":
+                deleteNote(notebook)
+                listNotes(notebook)
+            case "help":
+                printHelp(commands)
+            case "exit" | "close":
+                break
+            case _:
+                print("Unknown command. Please try again.")
+            
 
-        elif cmd in ("exit", "close"):
-            break
+def addNote(notebook: Notebook):
+    name = input("Enter note name: ").strip()
+    content = input("Enter note content: ")
+    note = notebook.addNote(name, content)
+    if note:
+        print(f"Note '{name}' added successfully.")
+    else:
+        print(f"Note '{name}' already exists.")
 
-        else:
-            print("Unknown command. Please try again.")
+def viewNote(notebook: Notebook):
+    name = input("Enter note name: ").strip()
+    note = notebook.getNote(name)
+    if note:
+        print(note)
+    else:
+        print(f"Note '{name}' not found.")
+
+def searchNotes(notebook: Notebook):
+    term = input("Enter search term: ").strip()
+    notes = notebook.searchNotes(term)
+    print(f"Found {len(notes)} notes matching the term '{term}'.")
+    for note in notes:
+        print(note)
+
+def editNote(notebook: Notebook):
+    name = input("Enter note name: ").strip()
+    content = input("Enter new note content: ")
+    note = notebook.editNote(name, content)
+    if note:
+        print(f"Note '{name}' updated successfully.")
+    else:
+        print(f"Note '{name}' not found.")
+
+def deleteNote(notebook: Notebook):
+    name = input("Enter note name: ").strip()
+    success = notebook.deleteNote(name)
+    if success:
+        print(f"Note '{name}' deleted successfully.")
+    else:
+        print(f"Note '{name}' not found.")
+
+def listNotes(notebook: Notebook):
+    # TODO: pagination
+    for note in notebook.notes:
+        print(note)
+
+def printHelp(commands: dict[str, str]):
+    print('\nAvailable commands:')
+    for cmd, desc in commands.items():
+        print(f"  <{cmd}> - {desc}")
