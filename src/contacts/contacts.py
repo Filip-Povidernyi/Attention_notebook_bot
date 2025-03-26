@@ -1,7 +1,9 @@
 from .classes.contacts_book import ContactsBook
 from .handler import add_contact, delete_contact, show_all
+from ..utils.decorators import auto_save_on_error
 
 
+@auto_save_on_error
 def contacts_main(book: ContactsBook):
     """
     Main loop for managing contacts in the address book.

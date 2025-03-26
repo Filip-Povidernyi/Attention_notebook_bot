@@ -1,4 +1,5 @@
 from .classes.note_book import Notebook
+from ..utils.decorators import auto_save_on_error
 
 """
 Module for managing notes in the application.
@@ -8,6 +9,7 @@ It includes a command-line interface (CLI) for performing actions such as
 displaying test messages and exiting the program.
 """
 
+@auto_save_on_error
 def notes_main(notebook: Notebook):
     """
     Main loop for managing notes in the application.
@@ -22,6 +24,9 @@ def notes_main(notebook: Notebook):
         "search": "Search for a notes",
         "edit": "Edit a note",
         "delete": "Delete a note",
+        "add_tag": "Add a tag to a note",
+        "remove_tag": "Remove a tag from a note",
+        "view_tags": "View tags of a note",
         "exit": "Exit the notes section",
         "help": "Show this help"
     }
@@ -48,6 +53,17 @@ def notes_main(notebook: Notebook):
             case "delete":
                 deleteNote(notebook)
                 listNotes(notebook)
+            case "add_tag":
+                note_name = input("Enter note name: ").strip()
+                tag = input("Enter tag to add: ").strip()
+                notebook.add_tag_to_note(note_name, tag)
+            case "remove_tag":
+                note_name = input("Enter note name: ").strip()
+                tag = input("Enter tag to remove: ").strip()
+                notebook.remove_tag_from_note(note_name, tag)
+            case "view_tags":
+                note_name = input("Enter note name: ").strip()
+                notebook.view_tags_of_note(note_name)
             case "help":
                 printHelp(commands)
             case "exit" | "close":

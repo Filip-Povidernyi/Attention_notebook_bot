@@ -44,6 +44,37 @@ class Notebook:
     
     def _sortNotes(self):
         self.notes.sort(key=lambda x: x.updatedAt, reverse=True)
+
+    def add_tag_to_note(self, note_name: str, tag: str):
+        note = self.getNote(note_name)
+        if note:
+            if note.add_tag(tag):
+                print(f"Tag '{tag}' added to note '{note_name}'.")
+            else:
+                print(f"Tag '{tag}' already exists on note '{note_name}'.")
+        else:
+            print(f"Note '{note_name}' not found.")
+    
+    def remove_tag_from_note(self, note_name: str, tag: str):
+        note = self.getNote(note_name)
+        if note:
+            if note.remove_tag(tag):
+                print(f"Tag '{tag}' removed from note '{note_name}'.")
+            else:
+                print(f"Tag '{tag}' not found on note '{note_name}'.")
+        else:
+            print(f"Note '{note_name}' not found.")
+    
+    def view_tags_of_note(self, note_name: str):
+        note = self.getNote(note_name)
+        if note:
+            tags = note.view_tags()
+            if tags:
+                print(f"Tags for '{note_name}': {', '.join(tags)}")
+            else:
+                print(f"No tags found for note '{note_name}'.")
+        else:
+            print(f"Note '{note_name}' not found.")
             
     def __str__(self):
         return "\n".join([f"{note['name']}: {note['content']}" for note in self.notes])
