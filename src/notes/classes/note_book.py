@@ -11,8 +11,8 @@ class Notebook:
         note = Note(name)
         note.setContent(content)
         self.notes.append(note)
-
-        # TODO: sort
+        self._sortNotes()
+        
         return note
     
     def getNote(self, name: str) -> Note | None:
@@ -24,6 +24,7 @@ class Notebook:
             return None
         
         note.setContent(content)
+        self._sortNotes()
         
         return note
 
@@ -40,6 +41,9 @@ class Notebook:
     
     def _searchCondition(self, term: str, note: Note) -> bool:
         return term in note.name or term in note.content
+    
+    def _sortNotes(self):
+        self.notes.sort(key=lambda x: x.updatedAt, reverse=True)
             
     def __str__(self):
         return "\n".join([f"{note['name']}: {note['content']}" for note in self.notes])
