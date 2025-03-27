@@ -1,4 +1,7 @@
 from datetime import datetime
+from rich.console import Console
+from rich.text import Text
+from src.notes.node_editor import NoteEditor
 
 
 class Note:
@@ -8,10 +11,28 @@ class Note:
         self.updated_at = self.create_at
         self.content = ""
         self.tags = []
+        self.console = Console()
 
     def __str__(self):
-        return f"Note name: {self.name}, {self.updated_at.strftime('%Y-%m-%d %H:%M:%S')} {self.content[:20]}..."
+        text = Text()
+        text.append(f"Note name: {self.name}", style="bold cyan")
+        text.append(f"\nLast updated: {self.updated_at.strftime('%Y-%m-%d %H:%M:%S')}", style="italic")
+        if self.tags:
+            text.append("\nTags: ", style="bold")
+            text.append(", ".join(self.tags), style="yellow")
+        text.append("\nContent: \n", style="bold")
+        text.append(self.content, style="white")
+        return str(text)
     
+    def edit_content(self):
+        editor = NoteEditor(self.content)
+        editor.run()
+        if editor.saved_content is not None:
+            self.content = editor.saved_content
+            self.updated_at = datetime.now()
+            return True
+        return False
+
     def set_content(self, content):
         self.content = content
         self.updated_at = datetime.now()
