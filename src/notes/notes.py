@@ -1,3 +1,4 @@
+from src.utils.common import print_help
 from .classes.note_book import Notebook
 from ..utils.decorators import auto_save_on_error
 
@@ -19,25 +20,25 @@ def notes_main(notebook: Notebook):
     """
     
     commands = {
-        "add": "Add a new note",
-        "view": "View a note",
-        "search": "Search for a notes",
-        "edit": "Edit a note",
-        "delete": "Delete a note",
+        "add":      "Add a new note",
+        "view":     "View a note",
+        "search":   "Search for a notes",
+        "edit":     "Edit a note",
+        "delete":   "Delete a note",
         "add_tag": "Add a tag to a note",
         "remove_tag": "Remove a tag from a note",
         "view_tags": "View tags of a note",
-        "exit": "Exit the notes section",
-        "help": "Show this help"
+        "help":     "Show this help",
+        "back":     "Go back to the main menu"
     }
     
-    print("\n\nYou are in Notes now\n")
+    print("\n\nYou are in Notes now")
 
-    printHelp(commands)
+    print_help(commands)
     listNotes(notebook)
 
     while True:
-        cmd = input("Enter a command: ").strip().lower()
+        cmd = input("\nEnter a command (or 'help' for available commands): ").strip().lower()
 
         match cmd:
             case "add":
@@ -65,8 +66,8 @@ def notes_main(notebook: Notebook):
                 note_name = input("Enter note name: ").strip()
                 notebook.view_tags_of_note(note_name)
             case "help":
-                printHelp(commands)
-            case "exit" | "close":
+                print_help(commands)
+            case "back":
                 break
             case _:
                 print("Unknown command. Please try again.")
@@ -117,8 +118,3 @@ def listNotes(notebook: Notebook):
     # TODO: pagination
     for note in notebook.notes:
         print(note)
-
-def printHelp(commands: dict[str, str]):
-    print('\nAvailable commands:')
-    for cmd, desc in commands.items():
-        print(f"  <{cmd}> - {desc}")

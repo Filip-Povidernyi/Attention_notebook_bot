@@ -1,4 +1,5 @@
 import atexit
+from src.utils.common import print_help
 from src.persistence.storage import load_data, save_data
 from src.contacts.contacts import contacts_main
 from src.notes.notes import notes_main
@@ -12,35 +13,40 @@ def main():
 
     This script runs the main loop, allowing users to interact with the app.
     """
-    
+
+    commands = {
+        "1":    "Go to Address Book",
+        "2":    "Go to your Notes",
+        "help": "Show this help",
+        "exit": "Exit the application"
+    }
+
+
     print("\nWelcome to your Personal Assistant!")
-    print("How can I assist you today?\n")
-    print('To enter the Address Book, enter "1"')
-    print('To enter Your Notes, enter "2"')
-    print('\nTo exit, enter "exit" or "close"\n')
+    print("How can I assist you today?")
+    print_help(commands)
 
     book, notes = load_data()
 
-    # Додав для автоматичного збереження перед виходом (говорив про дану бібліотеку на першому зідзвоні)
+    # Saves user's data upon normal interpreter termination
     atexit.register(save_data, book, notes)
 
     while True:
 
-        cmd = input("Enter a command: ").strip().lower()
+        cmd = input("\nEnter a command (or 'help' for available commands): ").strip().lower()
 
-        if cmd == "1":
-            contacts_main(book)
-
-        elif cmd == "2":
-            notes_main(notes)
-
-        elif cmd in ("exit", "close"):
-            print("Goodbye!")
-            break
-
-        else:
-            print("Unknown command. Please try again.")
-
+        match cmd:
+            case "1":
+                contacts_main(book)
+            case "2":
+                notes_main(notes)
+            case "help":
+                print_help(commands)
+            case "exit":
+                print("Goodbye, have a nice day!")
+                break
+            case _:
+                print("Unknown command. Please try again.")
 
 if __name__ == "__main__":
     main()
