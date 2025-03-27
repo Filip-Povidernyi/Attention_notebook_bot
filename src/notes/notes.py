@@ -1,6 +1,7 @@
 from src.utils.common import print_help
 from .classes.note_book import Notebook
 from src.utils.decorators import auto_save_on_error
+from rich.console import Console
 
 """
 Module for managing notes in the application.
@@ -10,6 +11,7 @@ It includes a command-line interface (CLI) for performing actions such as
 displaying test messages and exiting the program.
 """
 
+console = Console()
 
 @auto_save_on_error
 def notes_main(notebook: Notebook):
@@ -98,18 +100,19 @@ def view_note(notebook: Notebook, name):
 
     note = notebook.get_note(name)
     if note:
-        print(note)
+        console.print(note)
     else:
-        print(f"Note '{name}' not found.")
+        console.print(f"Note '{name}' not found.", style="red")
 
 def search_notes(notebook: Notebook, term):
     if(not term):
         term = input("Enter search term: ").strip()
 
     notes = notebook.search_notes(term)
-    print(f"Found {len(notes)} notes matching the term '{term}'.")
+    console.print(f"\nFound {len(notes)} notes matching the term '{term}'.", style="bold blue")
     for note in notes:
-        print(note)
+        console.print("\n" + "─" * 50, style="dim")
+        console.print(note)
 
 def edit_note(notebook: Notebook, name):
     if(not name):
@@ -118,9 +121,9 @@ def edit_note(notebook: Notebook, name):
     content = input("Enter new note content: ")
     note = notebook.edit_note(name, content)
     if note:
-        print(f"Note '{name}' updated successfully.")
+        console.print(f"Note '{name}' updated successfully!", style="green")
     else:
-        print(f"Note '{name}' not found.")
+        console.print(f"Note '{name}' not found.", style="red")
 
 def delete_note(notebook: Notebook, name):
     if(not name):
@@ -134,5 +137,11 @@ def delete_note(notebook: Notebook, name):
 
 def list_notes(notebook: Notebook):
     # TODO: pagination
+    if not notebook.notes:
+        console.print("No notes found.", style="yellow")
+        return
+    
+    console.print("\nYour Notes:", style="bold blue")
     for note in notebook.notes:
-        print(note)
+        console.print("─" * 50, style="dim")
+        console.print(note)
