@@ -1,6 +1,6 @@
 from src.utils.common import print_help
 from .classes.note_book import Notebook
-from ..utils.decorators import auto_save_on_error
+from src.utils.decorators import auto_save_on_error
 
 """
 Module for managing notes in the application.
@@ -21,11 +21,11 @@ def notes_main(notebook: Notebook):
     """
 
     commands = {
-        "add":      "Add a new note",
-        "view":     "View a note",
-        "search":   "Search for a notes",
-        "edit":     "Edit a note",
-        "delete":   "Delete a note",
+        "add":      "Add a new note (add <name>)",
+        "view":     "View a note (view <name>)",
+        "search":   "Search for a notes (search <term>)",
+        "edit":     "Edit a note (edit <name>)",
+        "delete":   "Delete a note (delete <name>)",
         "add_tag": "Add a tag to a note",
         "remove_tag": "Remove a tag from a note",
         "view_tags": "View tags of a note",
@@ -34,27 +34,28 @@ def notes_main(notebook: Notebook):
     }
 
     print("\n\nYou are in Notes now")
-
     print_help(commands)
     listNotes(notebook)
 
-    while True:
-        cmd = input(
-            "\nEnter a command (or 'help' for available commands): ").strip().lower()
+   
+        cmd_input = input("\nEnter a command (or 'help' for available commands): ").strip()
+        cmd_parts = cmd_input.split(maxsplit=1)
+        cmd = cmd_parts[0].lower()
+        param = cmd_parts[1] if len(cmd_parts) > 1 else None
 
         match cmd:
             case "add":
-                addNote(notebook)
+                addNote(notebook, param)
                 listNotes(notebook)
             case "view":
-                viewNote(notebook)
+                viewNote(notebook, param)
             case "search":
-                searchNotes(notebook)
+                searchNotes(notebook, param)
             case "edit":
-                editNote(notebook)
+                editNote(notebook, param)
                 listNotes(notebook)
             case "delete":
-                deleteNote(notebook)
+                deleteNote(notebook, param)
                 listNotes(notebook)
             case "add_tag":
                 note_name = input("Enter note name: ").strip()
@@ -80,8 +81,9 @@ def notes_main(notebook: Notebook):
                 print("Unknown command. Please try again.")
 
 
-def addNote(notebook: Notebook):
-    name = input("Enter note name: ").strip()
+def addNote(notebook: Notebook, name):
+    if(not name):
+        name = input("Enter note name: ").strip()
     content = input("Enter note content: ")
     note = notebook.addNote(name, content)
     if note:
@@ -90,25 +92,30 @@ def addNote(notebook: Notebook):
         print(f"Note '{name}' already exists.")
 
 
-def viewNote(notebook: Notebook):
-    name = input("Enter note name: ").strip()
+def viewNote(notebook: Notebook, name):
+    if(not name):
+        name = input("Enter note name: ").strip()
+
     note = notebook.getNote(name)
     if note:
         print(note)
     else:
         print(f"Note '{name}' not found.")
 
+def searchNotes(notebook: Notebook, term):
+    if(not term):
+        term = input("Enter search term: ").strip()
 
-def searchNotes(notebook: Notebook):
-    term = input("Enter search term: ").strip()
     notes = notebook.searchNotes(term)
     print(f"Found {len(notes)} notes matching the term '{term}'.")
     for note in notes:
         print(note)
 
 
-def editNote(notebook: Notebook):
-    name = input("Enter note name: ").strip()
+def editNote(notebook: Notebook, name):
+    if(not name):
+        name = input("Enter note name: ").strip()
+
     content = input("Enter new note content: ")
     note = notebook.editNote(name, content)
     if note:
@@ -116,9 +123,10 @@ def editNote(notebook: Notebook):
     else:
         print(f"Note '{name}' not found.")
 
+def deleteNote(notebook: Notebook, name):
+    if(not name):
+        name = input("Enter note name: ").strip()
 
-def deleteNote(notebook: Notebook):
-    name = input("Enter note name: ").strip()
     success = notebook.deleteNote(name)
     if success:
         print(f"Note '{name}' deleted successfully.")
