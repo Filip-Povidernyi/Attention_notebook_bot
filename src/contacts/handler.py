@@ -15,7 +15,7 @@ def input_error(func):
     return inner
 
 
-exit_cmd = ('exit', 'close')
+exit_cmd = ['exit', 'close']
 
 
 @input_error
@@ -102,3 +102,64 @@ def show_all(book):
     else:
         for record in book.data.values():
             print(f"{record}")
+
+
+@input_error
+def edit_contact(book):
+
+    name = input("Enter a name: ").strip().lower()
+    if name in exit_cmd:
+        return None
+
+    if book.find(name):
+        contact = book.data[name]
+        print(f"Contact name: {contact.name.value.title()}")
+        print(f"Phones: {', '.join(p.value for p in contact.phones)}")
+        if contact.address:
+            print(f"Address: {contact.address.value.title()}")
+        else:
+            print("Address: None")
+        if contact.email:
+            print(f"Email: {contact.email.value}")
+        else:
+            print("Email: None")
+        if contact.birthday:
+            print(f"Birthday: {contact.birthday.value.strftime('%d.%m.%Y')}")
+        else:
+            print("Birthday: None")
+
+        while True:
+            cmd = input(
+                "What do you want to change? (name, phone, address, email, birthday): ").strip().lower()
+
+            if cmd == "name":
+                new_name = input("Enter a new name: ").strip().lower()
+                contact.name.value = new_name
+                return f"Contact name changed successfully!"
+
+            elif cmd == "phone":
+                old_phone = input("Enter a old phone: ").strip().lower()
+                new_phone = input("Enter a new phone: ").strip().lower()
+                contact.edit_phone(old_phone, new_phone)
+                return f"Contact phone changed successfully!"
+
+            elif cmd == "address":
+                new_address = input("Enter a new address: ").strip().lower()
+                contact.add_address(new_address)
+                return f"Contact address changed successfully!"
+
+            elif cmd == "email":
+                new_email = input("Enter a new email: ").strip().lower()
+                contact.add_email(new_email)
+                return f"Contact email changed successfully!"
+
+            elif cmd == "birthday":
+                new_birthday = input(
+                    "Enter a new birthday(Use DD.MM.YYYY): ").strip().lower()
+                contact.add_birthday(new_birthday)
+                return f"Contact birthday changed successfully!"
+
+            else:
+                return "Unknown command. Please try again."
+    else:
+        return f"Contact {name} not found in your phonebook"
