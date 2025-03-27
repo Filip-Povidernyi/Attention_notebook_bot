@@ -15,7 +15,7 @@ def input_error(func):
     return inner
 
 
-exit_cmd = ['exit', 'close']
+exit_cmd = ['exit', 'close', 'back']
 
 
 @input_error
@@ -24,8 +24,9 @@ def add_contact(book):
     while True:
         try:
             name = input("Enter a name: ").strip().lower()
+
             if name in exit_cmd:
-                return None
+                return "You back to menu."
             elif name:
                 contact = Contact(name)
                 break
@@ -33,8 +34,9 @@ def add_contact(book):
             print(e)
 
     address = input("Enter address: ").strip().lower()
+
     if address in exit_cmd:
-        return None
+        return "You back to menu."
     elif address:
         contact.add_address(address)
 
@@ -42,7 +44,7 @@ def add_contact(book):
         try:
             phone = input("Enter phone: ").strip().lower()
             if phone in exit_cmd:
-                return None
+                return "You back to menu."
             elif phone:
                 contact.add_phone(phone)
                 break
@@ -55,7 +57,7 @@ def add_contact(book):
         try:
             email = input("Enter email: ").strip().lower()
             if email in exit_cmd:
-                return None
+                return "You back to menu."
             elif email:
                 contact.add_email(email)
                 break
@@ -69,7 +71,7 @@ def add_contact(book):
             birthday = input(
                 "Enter birthday(Use DD.MM.YYYY): ").strip().lower()
             if birthday in exit_cmd:
-                return None
+                return "You back to menu."
             elif birthday:
                 contact.add_birthday(birthday)
                 break
@@ -88,13 +90,18 @@ def delete_contact(book):
 
     name = input("Enter a name: ").strip().lower()
     if name in exit_cmd:
-        return None
+        return "You back to menu."
 
     if book.find(name):
-        book.delete(name)
-        return f"Contact {name} deleted successfully!"
+        confirm = input(f"Are you sure you want to delete {name}? (yes/no): ")
+        if confirm.lower() == "yes":
+            book.delete(name)
+            return f"Contact {name} deleted successfully!"
+        else:
+            return "Operation canceled."
 
 
+@input_error
 def show_all(book):
 
     if not book.data:
@@ -109,7 +116,7 @@ def edit_contact(book):
 
     name = input("Enter a name: ").strip().lower()
     if name in exit_cmd:
-        return None
+        return "You back to menu."
 
     if book.find(name):
         contact = book.data[name]
@@ -178,7 +185,9 @@ def edit_contact(book):
 
 @input_error
 def search_contacts(book):
-    """Шукає контакти за ім'ям, телефоном, email, адресою або днем народження"""
+
+    # Шукає контакти за ім'ям, телефоном, email, адресою або днем народження
+
     query = input("Enter search query: ").strip().lower()
 
     if query in exit_cmd:
@@ -203,3 +212,12 @@ def search_contacts(book):
             results.append(contact)
 
     return results
+
+
+handlers = {
+    "add": add_contact,
+    "delete": delete_contact,
+    "show-all": show_all,
+    "edit": edit_contact,
+    "find": search_contacts
+}

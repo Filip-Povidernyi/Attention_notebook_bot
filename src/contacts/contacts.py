@@ -1,6 +1,6 @@
 from src.utils.common import print_help
 from .classes.contacts_book import ContactsBook
-from .handler import add_contact, delete_contact, show_all, edit_contact, search_contacts
+from src.contacts.handler import handlers
 from .birthdays import get_upcoming_birthdays
 from ..utils.decorators import auto_save_on_error
 
@@ -18,7 +18,7 @@ def contacts_main(book: ContactsBook):
     """
     Main loop for managing contacts in the contacts book.
 
-    This function uses an instance of ContactBook and enters a loop where it 
+    This function uses an instance of ContactBook and enters a loop where it
     waits for user input to perform actions.
     """
 
@@ -27,6 +27,7 @@ def contacts_main(book: ContactsBook):
         "delete":       "Delete a contact",
         "show-all":     "Show all contacts",
         "edit":         "Edit contact name, phone, etc.",
+        "find":         "Find a contacts by query",
         "birthdays":    "Show upcoming birthdays",
         "help":         "Show this help",
         "back":         "Go back to the main menu"
@@ -42,26 +43,26 @@ def contacts_main(book: ContactsBook):
 
         match cmd:
             case "add":
-                result = add_contact(book)
+                result = handlers["add"](book)
                 if result:
                     print(result)
                 else:
                     continue
 
             case "delete":
-                print(delete_contact(book))
+                print(handlers["delete"](book))
 
             case "show-all":
-                show_all(book)
+                handlers["show-all"](book)
 
             case "edit":
-                print(edit_contact(book))
+                print(handlers["edit"](book))
 
             case "birthdays":
                 get_upcoming_birthdays()
 
             case "find":
-                found_contacts = search_contacts(book)
+                found_contacts = handlers["find"](book)
 
                 if found_contacts:
                     for contact in found_contacts:
@@ -75,7 +76,7 @@ def contacts_main(book: ContactsBook):
                 print_help(commands)
 
             case "back":
-                print("Going back to the main menu...")
+                print("\nGoing back to the main menu...")
                 print_help({
                     "1":    "Go to Address Book",
                     "2":    "Go to your Notes",
