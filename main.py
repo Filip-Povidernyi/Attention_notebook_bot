@@ -21,7 +21,6 @@ def main():
         "exit": "Exit the application"
     }
 
-
     print("\nWelcome to your Personal Assistant!")
     print("How can I assist you today?")
     print_help(commands)
@@ -33,20 +32,25 @@ def main():
 
     while True:
 
-        cmd = input("\nEnter a command (or 'help' for available commands): ").strip().lower()
+        cmd = input(
+            "\nEnter a command (or 'help' for available commands): ").strip().lower()
 
         match cmd:
             case "1":
                 contacts_main(book)
+
             case "2":
                 notes_main(notes)
+
             case "help":
                 print_help(commands)
+
             case "exit":
                 print("Goodbye, have a nice day!")
                 break
             case _:
                 print("Unknown command. Please try again.")
+
 
 if __name__ == "__main__":
     main()

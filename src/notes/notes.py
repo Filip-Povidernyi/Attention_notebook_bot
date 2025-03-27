@@ -10,6 +10,7 @@ It includes a command-line interface (CLI) for performing actions such as
 displaying test messages and exiting the program.
 """
 
+
 @auto_save_on_error
 def notes_main(notebook: Notebook):
     """
@@ -18,7 +19,7 @@ def notes_main(notebook: Notebook):
     This function presents a simple interface to the user for interacting with the notes section 
     of the application. It provides options for displaying a test message and exiting the program.
     """
-    
+
     commands = {
         "add":      "Add a new note (add <name>)",
         "view":     "View a note (view <name>)",
@@ -31,7 +32,7 @@ def notes_main(notebook: Notebook):
         "help":     "Show this help",
         "back":     "Go back to the main menu"
     }
-    
+
     print("\n\nYou are in Notes now")
     print_help(commands)
     list_notes(notebook)
@@ -70,10 +71,15 @@ def notes_main(notebook: Notebook):
             case "help":
                 print_help(commands)
             case "back":
+                print("\nYou are back to the main menu.")
+                print_help({"1":    "Go to Address Book",
+                            "2":    "Go to your Notes",
+                            "help": "Show this help",
+                            "exit": "Exit the application"})
                 break
             case _:
                 print("Unknown command. Please try again.")
-            
+
 
 def add_note(notebook: Notebook, name):
     if(not name):
