@@ -12,6 +12,7 @@ This module provides functionality to interact with and manage contacts.
 It includes a command-line interface (CLI) for performing actions with contacts.
 """
 
+
 @auto_save_on_error
 def contacts_main(book: ContactsBook):
     """
@@ -33,10 +34,11 @@ def contacts_main(book: ContactsBook):
 
     print("\n\nYou are in Address Book now")
     print_help(commands)
-    
+
     while True:
 
-        cmd = input("\nEnter a command (or 'help' for available commands): ").strip().lower()
+        cmd = input(
+            "\nEnter a command (or 'help' for available commands): ").strip().lower()
 
         match cmd:
             case "add":
@@ -59,4 +61,3 @@ def contacts_main(book: ContactsBook):
                 break
             case _:
                 print("Unknown command. Please try again.")
-
