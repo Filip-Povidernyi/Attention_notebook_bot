@@ -34,7 +34,7 @@ def notes_main(notebook: Notebook):
     
     print("\n\nYou are in Notes now")
     print_help(commands)
-    listNotes(notebook)
+    list_notes(notebook)
 
     while True:
         cmd_input = input("\nEnter a command (or 'help' for available commands): ").strip()
@@ -44,18 +44,18 @@ def notes_main(notebook: Notebook):
 
         match cmd:
             case "add":
-                addNote(notebook, param)
-                listNotes(notebook)
+                add_note(notebook, param)
+                list_notes(notebook)
             case "view":
-                viewNote(notebook, param)
+                view_note(notebook, param)
             case "search":
-                searchNotes(notebook, param)
+                search_notes(notebook, param)
             case "edit":
-                editNote(notebook, param)
-                listNotes(notebook)
+                edit_note(notebook, param)
+                list_notes(notebook)
             case "delete":
-                deleteNote(notebook, param)
-                listNotes(notebook)
+                delete_note(notebook, param)
+                list_notes(notebook)
             case "add_tag":
                 note_name = input("Enter note name: ").strip()
                 tag = input("Enter tag to add: ").strip()
@@ -75,53 +75,53 @@ def notes_main(notebook: Notebook):
                 print("Unknown command. Please try again.")
             
 
-def addNote(notebook: Notebook, name):
+def add_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
     content = input("Enter note content: ")
-    note = notebook.addNote(name, content)
+    note = notebook.add_note(name, content)
     if note:
         print(f"Note '{name}' added successfully.")
     else:
         print(f"Note '{name}' already exists.")
 
-def viewNote(notebook: Notebook, name):
+def view_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
-    note = notebook.getNote(name)
+    note = notebook.get_note(name)
     if note:
         print(note)
     else:
         print(f"Note '{name}' not found.")
 
-def searchNotes(notebook: Notebook, term):
+def search_notes(notebook: Notebook, term):
     if(not term):
         term = input("Enter search term: ").strip()
-    notes = notebook.searchNotes(term)
+    notes = notebook.search_notes(term)
     print(f"Found {len(notes)} notes matching the term '{term}'.")
     for note in notes:
         print(note)
 
-def editNote(notebook: Notebook, name):
+def edit_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
     content = input("Enter new note content: ")
-    note = notebook.editNote(name, content)
+    note = notebook.edit_note(name, content)
     if note:
         print(f"Note '{name}' updated successfully.")
     else:
         print(f"Note '{name}' not found.")
 
-def deleteNote(notebook: Notebook, name):
+def delete_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
-    success = notebook.deleteNote(name)
+    success = notebook.delete_note(name)
     if success:
         print(f"Note '{name}' deleted successfully.")
     else:
         print(f"Note '{name}' not found.")
 
-def listNotes(notebook: Notebook):
+def list_notes(notebook: Notebook):
     # TODO: pagination
     for note in notebook.notes:
         print(note)
