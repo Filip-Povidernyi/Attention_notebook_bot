@@ -1,7 +1,8 @@
 from src.utils.common import print_help
-from .classes.note_book import Notebook
+from .classes.note_book import Notebook, Note
 from src.utils.decorators import auto_save_on_error
 from rich.console import Console
+from src.notes.node_editor import NoteEditor
 
 """
 Module for managing notes in the application.
@@ -86,13 +87,16 @@ def notes_main(notebook: Notebook):
 def add_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
-        
-    content = input("Enter note content: ")
-    note = notebook.add_note(name, content)
-    if note:
-        print(f"Note '{name}' added successfully.")
-    else:
-        print(f"Note '{name}' already exists.")
+    
+    if(notebook.get_note(name)):
+        console.print(f"Note '{name}' already exists.", style="yellow")
+        return
+
+    editor = NoteEditor(name)
+    editor.run()
+
+    notebook.add_note(name, editor.saved_content)
+    console.print(f"Note '{name}' added successfully!", style="green")
 
 def view_note(notebook: Notebook, name):
     if(not name):
@@ -118,12 +122,21 @@ def edit_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
     
-    content = input("Enter new note content: ")
-    note = notebook.edit_note(name, content)
-    if note:
+    note = notebook.get_note(name)
+
+    if not note:
+        console.print(f"Note '{name}' not found.", style="red")
+        return
+    
+    editor = NoteEditor(name, note.content)
+    editor.run()
+
+    if editor.saved_content is not None:
+        notebook.edit_note(note.name, editor.saved_content)
         console.print(f"Note '{name}' updated successfully!", style="green")
     else:
-        console.print(f"Note '{name}' not found.", style="red")
+        console.print(f"Note '{name}' edit cancelled.", style="yellow")
+
 
 def delete_note(notebook: Notebook, name):
     if(not name):
