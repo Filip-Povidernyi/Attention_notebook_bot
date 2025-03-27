@@ -84,6 +84,7 @@ def notes_main(notebook: Notebook):
 def add_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
+        
     content = input("Enter note content: ")
     note = notebook.add_note(name, content)
     if note:
@@ -94,6 +95,7 @@ def add_note(notebook: Notebook, name):
 def view_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
+
     note = notebook.get_note(name)
     if note:
         print(note)
@@ -103,6 +105,7 @@ def view_note(notebook: Notebook, name):
 def search_notes(notebook: Notebook, term):
     if(not term):
         term = input("Enter search term: ").strip()
+
     notes = notebook.search_notes(term)
     print(f"Found {len(notes)} notes matching the term '{term}'.")
     for note in notes:
@@ -111,6 +114,7 @@ def search_notes(notebook: Notebook, term):
 def edit_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
+    
     content = input("Enter new note content: ")
     note = notebook.edit_note(name, content)
     if note:
@@ -121,6 +125,7 @@ def edit_note(notebook: Notebook, name):
 def delete_note(notebook: Notebook, name):
     if(not name):
         name = input("Enter note name: ").strip()
+    
     success = notebook.delete_note(name)
     if success:
         print(f"Note '{name}' deleted successfully.")
