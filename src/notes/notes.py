@@ -1,6 +1,7 @@
 from src.utils.common import print_help
 from .classes.note_book import Notebook
 from src.utils.decorators import auto_save_on_error
+from .tags import search_notes_by_tag, sort_notes_by_tags
 
 """
 Module for managing notes in the application.
@@ -29,6 +30,8 @@ def notes_main(notebook: Notebook):
         "add_tag": "Add a tag to a note",
         "remove_tag": "Remove a tag from a note",
         "view_tags": "View tags of a note",
+        "search_tag": "Search notes by tag (search_tag <tag>)",
+        "sort_by_tags": "Sort notes by number of tags",
         "help":     "Show this help",
         "back":     "Go back to the main menu"
     }
@@ -68,6 +71,11 @@ def notes_main(notebook: Notebook):
             case "view_tags":
                 note_name = input("Enter note name: ").strip()
                 notebook.view_tags_of_note(note_name)
+            case "search_tag":
+                tag = input("Enter tag to search: ").strip()
+                search_notes_by_tag(notebook, tag)
+            case "sort_by_tags":
+                sort_notes_by_tags(notebook)
             case "help":
                 print_help(commands)
             case "back":
