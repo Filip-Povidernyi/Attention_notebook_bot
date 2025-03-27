@@ -1,7 +1,7 @@
 from src.utils.common import print_help
-from .classes.contacts_book import ContactsBook
-from .handler import add_contact, delete_contact, show_all
-from .birthdays import get_upcoming_birthdays
+from .classes.contacts_book import ContactsBoo
+from .handler import add_contact, delete_contact, show_all, edit_contact
+from .birthdays import get_upcoming_birthday
 
 """
 Module for managing contacts in the application.
@@ -22,6 +22,7 @@ def contacts_main(book: ContactsBook):
         "add":          "Add a new contact",
         "delete":       "Delete a contact",
         "show-all":     "Show all contacts",
+        "edit":         "Edit contact name, phone, etc."
         "birthdays":    "Show upcoming birthdays",
         "help":         "Show this help",
         "back":         "Go back to the main menu"
@@ -45,6 +46,8 @@ def contacts_main(book: ContactsBook):
                 print(delete_contact(book))
             case "show-all":
                 show_all(book)
+            case "edit":
+                print(edit_contact(book))
             case "birthdays":
                 get_upcoming_birthdays()
             case "help":
@@ -53,3 +56,4 @@ def contacts_main(book: ContactsBook):
                 break
             case _:
                 print("Unknown command. Please try again.")
+
