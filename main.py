@@ -3,8 +3,10 @@ from src.utils.common import print_help
 from src.persistence.storage import load_data, save_data
 from src.contacts.contacts import contacts_main
 from src.notes.notes import notes_main
+from src.utils.decorators import auto_save_on_error
 
 
+@auto_save_on_error
 def main():
     """
     Main entry point for the Personal Assistant application.

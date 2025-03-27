@@ -2,6 +2,8 @@ from src.utils.common import print_help
 from .classes.contacts_book import ContactsBoo
 from .handler import add_contact, delete_contact, show_all, edit_contact
 from .birthdays import get_upcoming_birthday
+from ..utils.decorators import auto_save_on_error
+
 
 """
 Module for managing contacts in the application.
@@ -10,6 +12,7 @@ This module provides functionality to interact with and manage contacts.
 It includes a command-line interface (CLI) for performing actions with contacts.
 """
 
+@auto_save_on_error
 def contacts_main(book: ContactsBook):
     """
     Main loop for managing contacts in the contacts book.
