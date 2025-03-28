@@ -7,7 +7,8 @@ from src.notes.node_editor import NoteEditor, NoteEditorApp
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Footer, Label, ListItem, ListView
-from textual.widgets import DataTable, Footer
+from textual.widgets import DataTable, Footer, Button
+from textual.containers import Grid
 from rich.text import Text
 from textual.binding import Binding
 
@@ -53,6 +54,26 @@ class EditorScreen(ModalScreen[str]):
         if event.button.id == "back":
             self.app.pop_screen()
 
+class AskScreen(ModalScreen[bool]):  
+    """Screen with a dialog to ask a question."""
+    
+    def __init__(self, question: str):
+        super().__init__()
+        self.question = question
+
+    def compose(self) -> ComposeResult:
+        yield Grid(
+            Label(self.question, id="question"),
+            Button("Yes", variant="error", id="yes"),
+            Button("No", variant="primary", id="no"),
+            id="dialog",
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "yes":
+            self.dismiss(True)
+        else:
+            self.dismiss(False)
 
 class TableApp(App):
     CSS = """
@@ -70,6 +91,7 @@ class TableApp(App):
     BINDINGS = [
         Binding("escape,f10", "quit", "Quit", show=True),
         Binding("e", "edit", "Edit note", show=True),
+        Binding("d", "delete", "Delete note", show=True),
     ]
 
     def __init__(self, notebook: Notebook):
@@ -104,6 +126,18 @@ class TableApp(App):
             content = note.content
             screen = EditorScreen(name, content)
             self.push_screen(screen, on_close)
+            
+    async def action_delete(self):
+        if not self.selected_row:
+            return
+        
+        def on_close(result: bool):
+            if result:
+                self.notebook.delete_note(self.selected_row)
+                console.print(f"Note '{self.selected_row}' deleted successfully.", style="green")
+        
+        screen = AskScreen(f"Are you sure you want to delete note '{self.selected_row}'?")
+        self.push_screen(screen, on_close)
 
     def compose(self) -> ComposeResult:
         yield DataTable()
