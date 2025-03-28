@@ -4,8 +4,8 @@ from .classes.note_book import Notebook, Note
 from src.utils.decorators import auto_save_on_error
 from rich.console import Console
 from src.notes.node_editor import NoteEditor, NoteEditorApp
-# from src.notes.list_view import ListView, ListItem, Label
-from textual.app import App, ComposeResult, Screen
+from textual.app import App, ComposeResult
+from textual.screen import ModalScreen
 from textual.widgets import Footer, Label, ListItem, ListView
 from textual.widgets import DataTable, Footer
 from rich.text import Text
@@ -22,39 +22,12 @@ displaying test messages and exiting the program.
 console = Console()
 list_view = ListView()
 
-
-
-ROWS = [
-    ("lane", "swimmer", "country", "time 1", "time 2"),
-    (4, "Joseph Schooling", Text("Singapore", style="italic"), 50.39, 51.84),
-    (2, "Michael Phelps", Text("United States", style="italic"), 50.39, 51.84),
-    (5, "Chad le Clos", Text("South Africa", style="italic"), 51.14, 51.73),
-    (6, "László Cseh", Text("Hungary", style="italic"), 51.14, 51.58),
-    (3, "Li Zhuhao", Text("China", style="italic"), 51.26, 51.26),
-    (8, "Mehdy Metella", Text("France", style="italic"), 51.58, 52.15),
-    (7, "Tom Shields", Text("United States", style="italic"), 51.73, 51.12),
-    (1, "Aleksandr Sadovnikov", Text("Russia", style="italic"), 51.84, 50.85),
-    (10, "Darren Burns", Text("Scotland", style="italic"), 51.84, 51.55),
-]
-
-class ListViewExample(App):
-    # CSS_PATH = "list_view.tcss"
-
-    def compose(self) -> ComposeResult:
-        yield ListView(
-            ListItem(Label("One")),
-            ListItem(Label("Two")),
-            ListItem(Label("Three")),
-        )
-        yield Footer()
-
-
-class EditorScreen(Screen):
+class EditorScreen(ModalScreen[str]):
     """The new screen that will be displayed dynamically."""
     
     BINDINGS = [
         Binding("ctrl+o", "save", "Save", show=True),
-        Binding("ctrl+x", "quit", "Quit", show=True),
+        Binding("escape,f10", "quit", "Quit", show=True),
     ]
 
     def __init__(self, name, content):
@@ -95,11 +68,11 @@ class TableApp(App):
     """
     
     BINDINGS = [
-        ("q", "quit", "Quit"),
-        ("e", "edit", "Edit note")
+        Binding("escape,f10", "quit", "Quit", show=True),
+        Binding("e", "edit", "Edit note", show=True),
     ]
 
-    def __init__(self, notebook):
+    def __init__(self, notebook: Notebook):
         super().__init__()
         self.notebook = notebook
 
@@ -122,7 +95,7 @@ class TableApp(App):
                 console.print(f"Note '{name}' not found.", style="red")
                 return
             
-            def on_close(content):
+            def on_close(content: str):
                 if content:
                     notebook.edit_note(name, content)
                     console.print(f"Note '{name}' updated successfully!", style="green")
