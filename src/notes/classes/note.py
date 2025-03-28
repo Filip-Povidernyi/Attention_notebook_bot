@@ -12,16 +12,18 @@ class Note:
         self.tags = []
 
     def __str__(self):
+
         text = Text()
         text.append(f"Note name: {self.name}", style="bold cyan")
-        text.append(f"\nLast updated: {self.updated_at.strftime('%Y-%m-%d %H:%M:%S')}", style="italic")
+        text.append(
+            f"\nLast updated: {self.updated_at.strftime('%Y-%m-%d %H:%M:%S')}", style="italic")
         if self.tags:
             text.append("\nTags: ", style="bold")
             text.append(", ".join(self.tags), style="yellow")
         text.append("\nContent: \n", style="bold")
         text.append(self.content, style="white")
         return str(text)
-    
+
     def set_content(self, content):
         self.content = content
         self.updated_at = datetime.now()
@@ -40,4 +42,3 @@ class Note:
 
     def view_tags(self):
         return self.tags
-

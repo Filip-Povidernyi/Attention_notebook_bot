@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, TextArea
 from textual.binding import Binding
 
+
 class NoteEditor(App):
     CSS = """
     Screen {
@@ -41,4 +42,3 @@ class NoteEditor(App):
 
     def action_quit(self) -> None:
         self.exit()
-

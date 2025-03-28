@@ -4,6 +4,7 @@ from src.persistence.storage import load_data, save_data
 from src.contacts.contacts import contacts_main
 from src.notes.notes import notes_main
 from src.utils.decorators import auto_save_on_error
+from src.utils.autocomplete import suggest_command
 
 
 @auto_save_on_error
@@ -49,7 +50,14 @@ def main():
                 print("Goodbye, have a nice day!")
                 break
             case _:
-                print("Unknown command. Please try again.")
+
+                suggested = suggest_command(cmd, list(commands.keys()), 0.5)
+                if suggested:
+                    print(
+                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
+
+                else:
+                    print(f"Unknown command '{cmd}'. Please try again.")
 
 
 if __name__ == "__main__":
