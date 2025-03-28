@@ -1,15 +1,12 @@
 from src.utils.common import print_help
-from .classes.note_book import Notebook, Note
+from .classes.note_book import Notebook
 from src.utils.decorators import auto_save_on_error
+from .tags import search_notes_by_tag, sort_notes_by_tags
 from rich.console import Console
-from src.notes.node_editor import NoteEditor, NoteEditorApp
-from textual.app import App, ComposeResult
-from textual.screen import ModalScreen
-from textual.widgets import Footer, Label, ListItem, ListView
-from textual.widgets import DataTable, Footer, Button
-from textual.containers import Grid
-from rich.text import Text
-from textual.binding import Binding
+from src.notes.node_editor import NoteEditor
+from src.utils.autocomplete import suggest_command
+from src.utils.constants import MAIN_MENU_COMMANDS, NOTE_MENU_COMMANDS
+
 
 """
 Module for managing notes in the application.
@@ -20,151 +17,7 @@ displaying test messages and exiting the program.
 """
 
 console = Console()
-list_view = ListView()
 
-class EditorScreen(ModalScreen[str]):
-    """The new screen that will be displayed dynamically."""
-    
-    BINDINGS = [
-        Binding("ctrl+o", "save", "Save", show=True),
-        Binding("escape,f10", "quit", "Quit", show=True),
-    ]
-
-    def __init__(self, name, content, editable: bool):
-        super().__init__()
-        self.x_name = name
-        self.x_content = content
-        self.saved_content = None
-        self.editable = editable
-
-    def compose(self) -> ComposeResult:
-        yield NoteEditor(self.x_name, self.x_content, self.editable)
-        
-    def action_save(self) -> None:
-        editor = self.query_one(NoteEditor)
-        self.saved_content = editor.get_text()
-        self.notify("Content saved!")
-
-    def action_quit(self) -> None:
-        self.dismiss(self.saved_content)
-        
-
-    def on_button_pressed(self, event) -> None:
-        """Handle button press to go back."""
-        if event.button.id == "back":
-            self.app.pop_screen()
-
-class AskScreen(ModalScreen[bool]):  
-    """Screen with a dialog to ask a question."""
-    
-    def __init__(self, question: str):
-        super().__init__()
-        self.question = question
-
-    def compose(self) -> ComposeResult:
-        yield Grid(
-            Label(self.question, id="question"),
-            Button("Yes", variant="error", id="yes"),
-            Button("No", variant="primary", id="no"),
-            id="dialog",
-        )
-
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "yes":
-            self.dismiss(True)
-        else:
-            self.dismiss(False)
-
-class TableApp(App):
-    CSS = """
-    Screen {
-        align: center middle;
-    }
-
-    DataTable {
-        height: 80%;
-        width: 90%;
-        border: solid green;
-    }
-    """
-    
-    BINDINGS = [
-        Binding("escape,f10", "quit", "Quit", show=True),
-        Binding("a", "add", "Add note", show=True),
-        Binding("v", "edit(False)", "View note", show=True),
-        Binding("e", "edit(True)", "Edit note", show=True),
-        Binding("d", "delete", "Delete note", show=True),
-        Binding("s", "search", "Search note", show=True),
-        
-        # Binding("t", "add_tag", "Add tag", show=True),
-        # Binding("r", "remove_tag", "Remove tag", show=True),
-        # Binding("g", "view_tags", "View tags", show=True),
-        # Binding("h", "help", "Help", show=True),
-        # Binding("b", "back", "Back", show=True),
-    ]
-
-    def __init__(self, notebook: Notebook):
-        super().__init__()
-        self.notebook = notebook
-
-    current_sorts: set = set()
-
-    def action_quit(self):
-        self.exit(0)
-
-    def on_data_table_row_highlighted(self, e: DataTable.RowHighlighted):
-        self.selected_row = e.row_key
-
-    async def action_edit(self, editable: bool):
-        if self.selected_row:
-            name = self.selected_row
-            notebook = self.notebook
-
-            note = notebook.get_note(name)
-
-            if not note:
-                console.print(f"Note '{name}' not found.", style="red")
-                return
-            
-            def on_close(content: str):
-                if content:
-                    notebook.edit_note(name, content)
-                    console.print(f"Note '{name}' updated successfully!", style="green")
-            
-            name = note.name
-            content = note.content
-            screen = EditorScreen(name, content, editable)
-            self.push_screen(screen, on_close)
-            
-    async def action_delete(self):
-        if not self.selected_row:
-            return
-        
-        def on_close(result: bool):
-            if result:
-                self.notebook.delete_note(self.selected_row)
-                console.print(f"Note '{self.selected_row}' deleted successfully.", style="green")
-        
-        screen = AskScreen(f"Are you sure you want to delete note '{self.selected_row}'?")
-        self.push_screen(screen, on_close)
-
-    def compose(self) -> ComposeResult:
-        yield DataTable()
-        yield Footer()
-
-    def on_mount(self) -> None:
-        table = self.query_one(DataTable)
-        table.cursor_type = "row"
-        self.list(self.notebook.notes)
-
-    def list(self, notes):
-        table = self.query_one(DataTable)
-        table.clear()
-        for col in ["name", "updated_at", "content"]:
-            table.add_column(col, key=col)
-
-        for n in notes:
-            table.add_row((n.name, n.updated_at, n.content[:20]), key=n.name)
 
 @auto_save_on_error
 def notes_main(notebook: Notebook):
@@ -175,38 +28,13 @@ def notes_main(notebook: Notebook):
     of the application. It provides options for displaying a test message and exiting the program.
     """
 
-    commands = {
-        "add":      "Add a new note (add <name>)",
-        "view":     "View a note (view <name>)",
-        "view_all":     "View all notes",
-        "search":   "Search for a notes (search <term>)",
-        "edit":     "Edit a note (edit <name>)",
-        "delete":   "Delete a note (delete <name>)",
-        "add_tag": "Add a tag to a note",
-        "remove_tag": "Remove a tag from a note",
-        "view_tags": "View tags of a note",
-        "help":     "Show this help",
-        "back":     "Go back to the main menu"
-    }
-
-    print("\n\nYou are in Notes now")
-    print_help(commands)
-
-    for node in notebook.notes:
-        console.print(node)
-    
-
-    # app = ListViewExample()
-    app = TableApp(notebook)
-    app.run()
-
-    # app.list(notebook.notes)
-
-    # list_notes(notebook)
-    # return
+    console.print("\n\nYou are in Notes now", style="steel_blue")
+    print_help(NOTE_MENU_COMMANDS)
+    list_notes(notebook)
 
     while True:
-        cmd_input = input("\nEnter a command (or 'help' for available commands): ").strip()
+        cmd_input = input(
+            "\nEnter a command (or 'help' for available commands): ").strip()
         cmd_parts = cmd_input.split(maxsplit=1)
         cmd = cmd_parts[0].lower()
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
@@ -215,58 +43,78 @@ def notes_main(notebook: Notebook):
             case "add":
                 add_note(notebook, param)
                 list_notes(notebook)
+
             case "view":
                 view_note(notebook, param)
-            case "view_all":
-                list_notes(notebook)
+
             case "search":
                 search_notes(notebook, param)
+
             case "edit":
                 edit_note(notebook, param)
                 list_notes(notebook)
+
             case "delete":
                 delete_note(notebook, param)
                 list_notes(notebook)
+
             case "add_tag":
                 note_name = input("Enter note name: ").strip()
                 tag = input("Enter tag to add: ").strip()
                 notebook.add_tag_to_note(note_name, tag)
+
             case "remove_tag":
                 note_name = input("Enter note name: ").strip()
                 tag = input("Enter tag to remove: ").strip()
                 notebook.remove_tag_from_note(note_name, tag)
+
             case "view_tags":
                 note_name = input("Enter note name: ").strip()
                 notebook.view_tags_of_note(note_name)
+
+            case "search_tag":
+                tag = input("Enter tag to search: ").strip()
+                search_notes_by_tag(notebook, tag)
+
+            case "sort_by_tags":
+                sort_notes_by_tags(notebook)
+
             case "help":
-                print_help(commands)
+                print_help(NOTE_MENU_COMMANDS)
+
             case "back":
-                print("\nYou are back to the main menu.")
-                print_help({"1":    "Go to Address Book",
-                            "2":    "Go to your Notes",
-                            "help": "Show this help",
-                            "exit": "Exit the application"})
+                print("\nGoing back to the main menu...")
+                print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
-                print("Unknown command. Please try again.")
+                # Handle unknown commands
+                suggested = suggest_command(
+                    cmd, list(NOTE_MENU_COMMANDS.keys()), 0.5)
+                if suggested:
+                    print(
+                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
+
+                else:
+                    print(f"Unknown command '{cmd}'. Please try again.")
 
 
 def add_note(notebook: Notebook, name):
-    if(not name):
+    if (not name):
         name = input("Enter note name: ").strip()
-    
-    if(notebook.get_note(name)):
+
+    if (notebook.get_note(name)):
         console.print(f"Note '{name}' already exists.", style="yellow")
         return
 
-    editor = NoteEditorApp(name)
+    editor = NoteEditor(name)
     editor.run()
 
     notebook.add_note(name, editor.saved_content)
     console.print(f"Note '{name}' added successfully!", style="green")
 
+
 def view_note(notebook: Notebook, name):
-    if(not name):
+    if (not name):
         name = input("Enter note name: ").strip()
 
     note = notebook.get_note(name)
@@ -275,27 +123,30 @@ def view_note(notebook: Notebook, name):
     else:
         console.print(f"Note '{name}' not found.", style="red")
 
+
 def search_notes(notebook: Notebook, term):
-    if(not term):
+    if (not term):
         term = input("Enter search term: ").strip()
 
     notes = notebook.search_notes(term)
-    console.print(f"\nFound {len(notes)} notes matching the term '{term}'.", style="bold blue")
+    console.print(
+        f"\nFound {len(notes)} notes matching the term '{term}'.", style="bold blue")
     for note in notes:
         console.print("\n" + "─" * 50, style="dim")
         console.print(note)
 
+
 def edit_note(notebook: Notebook, name):
-    if(not name):
+    if (not name):
         name = input("Enter note name: ").strip()
-    
+
     note = notebook.get_note(name)
 
     if not note:
         console.print(f"Note '{name}' not found.", style="red")
         return
-    
-    editor = NoteEditorApp(name, note.content)
+
+    editor = NoteEditor(name, note.content)
     editor.run()
 
     if editor.saved_content is not None:
@@ -306,24 +157,23 @@ def edit_note(notebook: Notebook, name):
 
 
 def delete_note(notebook: Notebook, name):
-    if(not name):
+    if (not name):
         name = input("Enter note name: ").strip()
-    
+
     success = notebook.delete_note(name)
     if success:
         print(f"Note '{name}' deleted successfully.")
     else:
         print(f"Note '{name}' not found.")
 
+
 def list_notes(notebook: Notebook):
-    """Display notes using ListView."""
-    list_view.clear()
+    # TODO: pagination
     if not notebook.notes:
         console.print("No notes found.", style="yellow")
         return
-    
+
+    console.print("\nYour Notes:", style="bold blue")
     for note in notebook.notes:
-        item = ListItem(Label(f"{note.name}: {note.content}"))
-        list_view.add(item)
-    
-    console.print(list_view)
+        console.print("─" * 50, style="dim")
+        console.print(note)
