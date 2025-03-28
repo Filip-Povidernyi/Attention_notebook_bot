@@ -1,4 +1,5 @@
 from .classes.contact import Contact
+from src.utils.autocomplete import suggest_command
 
 
 def input_error(func):
@@ -16,13 +17,15 @@ def input_error(func):
 
 
 exit_cmd = ['exit', 'close', 'back']
+commands = ["name", "phone", "address", "email", "birthday"]
 
 
 @input_error
 def add_contact(book):
-
+    print("For back to menu, enter 'back'")
     while True:
         try:
+
             name = input("Enter a name: ").strip().lower()
 
             if name in exit_cmd:
@@ -88,7 +91,9 @@ def add_contact(book):
 @input_error
 def delete_contact(book):
 
-    name = input("Enter a name: ").strip().lower()
+    print("For back to menu, enter 'back'")
+    name = input("Enter a name to delete: ").strip().lower()
+
     if name in exit_cmd:
         return "You back to menu."
 
@@ -113,8 +118,9 @@ def show_all(book):
 
 @input_error
 def edit_contact(book):
-
+    print("For back to menu, enter 'back'")
     name = input("Enter a name: ").strip().lower()
+
     if name in exit_cmd:
         return "You back to menu."
 
@@ -142,10 +148,18 @@ def edit_contact(book):
             cmd = input(
                 "What do you want to change? (name, phone, address, email, birthday): ").strip().lower()
 
-            if cmd == "name":
+            if cmd in exit_cmd:
+                return "You back to menu."
+
+            elif cmd == "name":
+
                 new_name = input("Enter a new name: ").strip().lower()
-                contact.name.value = new_name
-                return f"Contact name changed successfully!"
+
+                if new_name != name and not book.find(new_name):
+                    book.data[new_name] = contact
+                    book.data[new_name].name.value = new_name
+                    book.delete(name)
+                print(f"Contact name changed successfully!")
 
             elif cmd == "phone":
                 cmd_phone = input(
@@ -154,31 +168,48 @@ def edit_contact(book):
                 if cmd_phone == "add":
                     new_phone = input("Enter a new phone: ").strip().lower()
                     contact.add_phone(new_phone)
-                    return f"Contact phone added successfully!"
-                else:
+                    print(f"Contact phone added successfully!")
+
+                elif cmd_phone == "change":
                     old_phone = input("Enter a old phone: ").strip().lower()
                     new_phone = input("Enter a new phone: ").strip().lower()
                     contact.edit_phone(old_phone, new_phone)
-                    return f"Contact phone changed successfully!"
+                    print(f"Contact phone changed successfully!")
+
+                else:
+                    suggested = suggest_command(
+                        cmd_phone, ['add', 'change'], 0.5)
+                    if suggested:
+                        print(
+                            f"Unknown command '{cmd_phone}'.\nMaybe you mean '{suggested}'?")
+                    else:
+                        print(
+                            f"Unknown command '{cmd_phone}'. Please try again.")
 
             elif cmd == "address":
                 new_address = input("Enter a new address: ").strip().lower()
                 contact.add_address(new_address)
-                return f"Contact address changed successfully!"
+                print(f"Contact address changed successfully!")
 
             elif cmd == "email":
                 new_email = input("Enter a new email: ").strip().lower()
                 contact.add_email(new_email)
-                return f"Contact email changed successfully!"
+                print(f"Contact email changed successfully!")
 
             elif cmd == "birthday":
                 new_birthday = input(
                     "Enter a new birthday(Use DD.MM.YYYY): ").strip().lower()
                 contact.add_birthday(new_birthday)
-                return f"Contact birthday changed successfully!"
+                print(f"Contact birthday changed successfully!")
 
             else:
-                return "Unknown command. Please try again."
+                suggested = suggest_command(cmd, commands, 0.5)
+                if suggested:
+                    print(
+                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
+
+                else:
+                    print(f"Unknown command '{cmd}'. Please try again.")
     else:
         return f"Contact {name} not found in your phonebook"
 
@@ -187,7 +218,7 @@ def edit_contact(book):
 def search_contacts(book):
 
     # Шукає контакти за ім'ям, телефоном, email, адресою або днем народження
-
+    print("For back to menu, enter 'back'")
     query = input("Enter search query: ").strip().lower()
 
     if query in exit_cmd:

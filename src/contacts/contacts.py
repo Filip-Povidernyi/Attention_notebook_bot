@@ -3,6 +3,7 @@ from .classes.contacts_book import ContactsBook
 from src.contacts.handler import handlers
 from .birthdays import get_upcoming_birthdays
 from ..utils.decorators import auto_save_on_error
+from ..utils.autocomplete import suggest_command
 
 
 """
@@ -69,6 +70,12 @@ def contacts_main(book: ContactsBook):
                         print(contact)
                 elif found_contacts is None:
                     print("You back to menu.")
+                    print_help({
+                        "1":    "Go to Address Book",
+                        "2":    "Go to your Notes",
+                        "help": "Show this help",
+                        "exit": "Exit the application"
+                    })
                 else:
                     print("No contacts found.")
 
@@ -85,4 +92,10 @@ def contacts_main(book: ContactsBook):
                 })
                 break
             case _:
-                print("Unknown command. Please try again.")
+                suggested = suggest_command(cmd, list(commands.keys()), 0.5)
+                if suggested:
+                    print(
+                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
+
+                else:
+                    print(f"Unknown command '{cmd}'. Please try again.")
