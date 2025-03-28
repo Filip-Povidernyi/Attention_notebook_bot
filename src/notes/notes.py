@@ -1,5 +1,5 @@
 from src.utils.common import print_help
-from .classes.note_book import Notebook, Note
+from .classes.note_book import Notebook
 from src.utils.decorators import auto_save_on_error
 from .tags import search_notes_by_tag, sort_notes_by_tags
 from rich.console import Console
@@ -27,8 +27,6 @@ def notes_main(notebook: Notebook):
     This function presents a simple interface to the user for interacting with the notes section 
     of the application. It provides options for displaying a test message and exiting the program.
     """
-
-
 
     console.print("\n\nYou are in Notes now", style="steel_blue")
     print_help(NOTE_MENU_COMMANDS)
@@ -90,7 +88,8 @@ def notes_main(notebook: Notebook):
                 break
             case _:
                 # Handle unknown commands
-                suggested = suggest_command(cmd, list(NOTE_MENU_COMMANDS.keys()), 0.5)
+                suggested = suggest_command(
+                    cmd, list(NOTE_MENU_COMMANDS.keys()), 0.5)
                 if suggested:
                     print(
                         f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
