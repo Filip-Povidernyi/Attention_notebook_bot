@@ -31,3 +31,13 @@ class Contact:
 
     def add_birthday(self, birthday: str):
         self.birthday = Birthday(birthday)
+
+    def edit_phone(self, old_phone: str, new_phone: str):
+
+        for phone in self.phones:
+            if phone.value == old_phone:
+                phone.value = Phone(new_phone).value
+
+                return f"Номер {old_phone} змінено на номер {new_phone}"
+
+        raise ValueError(f"Номер {old_phone} не знайдено")
