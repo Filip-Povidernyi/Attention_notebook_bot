@@ -4,6 +4,7 @@ from src.contacts.handler import handlers
 from .birthdays import get_upcoming_birthdays
 from ..utils.decorators import auto_save_on_error
 from ..utils.autocomplete import suggest_command
+from src.utils.constants import MAIN_MENU_COMMANDS, CONTACT_MENU_COMMANDS
 
 
 """
@@ -23,19 +24,9 @@ def contacts_main(book: ContactsBook):
     waits for user input to perform actions.
     """
 
-    commands = {
-        "add":          "Add a new contact",
-        "delete":       "Delete a contact",
-        "show-all":     "Show all contacts",
-        "edit":         "Edit contact name, phone, etc.",
-        "find":         "Find a contacts by query",
-        "birthdays":    "Show upcoming birthdays",
-        "help":         "Show this help",
-        "back":         "Go back to the main menu"
-    }
 
     print("\n\nYou are in Address Book now")
-    print_help(commands)
+    print_help(CONTACT_MENU_COMMANDS)
 
     while True:
 
@@ -70,29 +61,19 @@ def contacts_main(book: ContactsBook):
                         print(contact)
                 elif found_contacts is None:
                     print("You back to menu.")
-                    print_help({
-                        "1":    "Go to Address Book",
-                        "2":    "Go to your Notes",
-                        "help": "Show this help",
-                        "exit": "Exit the application"
-                    })
+                    print_help(MAIN_MENU_COMMANDS)
                 else:
                     print("No contacts found.")
 
             case "help":
-                print_help(commands)
+                print_help(CONTACT_MENU_COMMANDS)
 
             case "back":
                 print("\nGoing back to the main menu...")
-                print_help({
-                    "1":    "Go to Address Book",
-                    "2":    "Go to your Notes",
-                    "help": "Show this help",
-                    "exit": "Exit the application"
-                })
+                print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
-                suggested = suggest_command(cmd, list(commands.keys()), 0.5)
+                suggested = suggest_command(cmd, list(CONTACT_MENU_COMMANDS.keys()), 0.5)
                 if suggested:
                     print(
                         f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
