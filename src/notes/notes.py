@@ -1,13 +1,15 @@
+from textual import work
 from src.utils.common import print_help
 from .classes.note_book import Notebook, Note
 from src.utils.decorators import auto_save_on_error
 from rich.console import Console
-from src.notes.node_editor import NoteEditor
+from src.notes.node_editor import NoteEditor, NoteEditorApp
 # from src.notes.list_view import ListView, ListItem, Label
 from textual.app import App, ComposeResult, Screen
 from textual.widgets import Footer, Label, ListItem, ListView
 from textual.widgets import DataTable, Footer
 from rich.text import Text
+from textual.binding import Binding
 
 """
 Module for managing notes in the application.
@@ -47,16 +49,31 @@ class ListViewExample(App):
         yield Footer()
 
 
-class NewScreen(Screen):
+class EditorScreen(Screen):
     """The new screen that will be displayed dynamically."""
+    
+    BINDINGS = [
+        Binding("ctrl+o", "save", "Save", show=True),
+        Binding("ctrl+x", "quit", "Quit", show=True),
+    ]
 
     def __init__(self, name, content):
         super().__init__()
         self.x_name = name
         self.x_content = content
+        self.saved_content = None
 
     def compose(self) -> ComposeResult:
         yield NoteEditor(self.x_name, self.x_content)
+        
+    def action_save(self) -> None:
+        editor = self.query_one(NoteEditor)
+        self.saved_content = editor.get_text()
+        self.notify("Content saved!")
+
+    def action_quit(self) -> None:
+        self.dismiss(self.saved_content)
+        
 
     def on_button_pressed(self, event) -> None:
         """Handle button press to go back."""
@@ -65,15 +82,21 @@ class NewScreen(Screen):
 
 
 class TableApp(App):
+    CSS = """
+    Screen {
+        align: center middle;
+    }
+
+    DataTable {
+        height: 80%;
+        width: 90%;
+        border: solid green;
+    }
+    """
+    
     BINDINGS = [
         ("q", "quit", "Quit"),
-
         ("e", "edit", "Edit note")
-
-        # ("a", "sort_by_average_time", "Sort By Average Time"),
-        # ("n", "sort_by_last_name", "Sort By Last Name"),
-        # ("c", "sort_by_country", "Sort By Country"),
-        # ("d", "sort_by_columns", "Sort By Columns (Only)"),
     ]
 
     def __init__(self, notebook):
@@ -85,23 +108,13 @@ class TableApp(App):
     def action_quit(self):
         self.exit(0)
 
-
-    def on_data_table_row_selected(self, e: DataTable.RowSelected):
-        print(e)
-
     def on_data_table_row_highlighted(self, e: DataTable.RowHighlighted):
-        print(e)
         self.selected_row = e.row_key
 
-    def action_edit(self):
-        table = self.query_one(DataTable)
-        index = table.cursor_row
-
-
+    async def action_edit(self):
         if self.selected_row:
             name = self.selected_row
             notebook = self.notebook
-            # edit_note(self.notebook, self.selected_row)
 
             note = notebook.get_note(name)
 
@@ -109,10 +122,15 @@ class TableApp(App):
                 console.print(f"Note '{name}' not found.", style="red")
                 return
             
-            # editor = NoteEditor(name, note.content)
-            screen = NewScreen(name, note.content)
-            self.push_screen(screen)
-
+            def on_close(content):
+                if content:
+                    notebook.edit_note(name, content)
+                    console.print(f"Note '{name}' updated successfully!", style="green")
+            
+            name = note.name
+            content = note.content
+            screen = EditorScreen(name, content)
+            self.push_screen(screen, on_close)
 
     def compose(self) -> ComposeResult:
         yield DataTable()
@@ -129,64 +147,8 @@ class TableApp(App):
         for col in ["name", "updated_at", "content"]:
             table.add_column(col, key=col)
 
-        ns = map(lambda n: (n.name, n.updated_at, n.content[:20]), notes)
-
         for n in notes:
-            table.add_row((n.name, n.updated_at, n.content[:20]), key=n.name, label=n.name + "KEY")
-
-        # table.add_rows(ns)
-
-    def sort_reverse(self, sort_type: str):
-        """Determine if `sort_type` is ascending or descending."""
-        reverse = sort_type in self.current_sorts
-        if reverse:
-            self.current_sorts.remove(sort_type)
-        else:
-            self.current_sorts.add(sort_type)
-        return reverse
-
-    def action_sort_by_average_time(self) -> None:
-        """Sort DataTable by average of times (via a function) and
-        passing of column data through positional arguments."""
-
-        def sort_by_average_time_then_last_name(row_data):
-            name, *scores = row_data
-            return (sum(scores) / len(scores), name.split()[-1])
-
-        table = self.query_one(DataTable)
-        table.sort(
-            "swimmer",
-            "time 1",
-            "time 2",
-            key=sort_by_average_time_then_last_name,
-            reverse=self.sort_reverse("time"),
-        )
-
-    def action_sort_by_last_name(self) -> None:
-        """Sort DataTable by last name of swimmer (via a lambda)."""
-        table = self.query_one(DataTable)
-        table.sort(
-            "swimmer",
-            key=lambda swimmer: swimmer.split()[-1],
-            reverse=self.sort_reverse("swimmer"),
-        )
-
-    def action_sort_by_country(self) -> None:
-        """Sort DataTable by country which is a `Rich.Text` object."""
-        table = self.query_one(DataTable)
-        table.sort(
-            "country",
-            key=lambda country: country.plain,
-            reverse=self.sort_reverse("country"),
-        )
-
-    def action_sort_by_columns(self) -> None:
-        """Sort DataTable without a key."""
-        table = self.query_one(DataTable)
-        table.sort("swimmer", "lane", reverse=self.sort_reverse("columns"))
-
-
-
+            table.add_row((n.name, n.updated_at, n.content[:20]), key=n.name)
 
 @auto_save_on_error
 def notes_main(notebook: Notebook):
@@ -225,7 +187,7 @@ def notes_main(notebook: Notebook):
     # app.list(notebook.notes)
 
     # list_notes(notebook)
-    return
+    # return
 
     while True:
         cmd_input = input("\nEnter a command (or 'help' for available commands): ").strip()
@@ -281,7 +243,7 @@ def add_note(notebook: Notebook, name):
         console.print(f"Note '{name}' already exists.", style="yellow")
         return
 
-    editor = NoteEditor(name)
+    editor = NoteEditorApp(name)
     editor.run()
 
     notebook.add_note(name, editor.saved_content)
@@ -317,7 +279,7 @@ def edit_note(notebook: Notebook, name):
         console.print(f"Note '{name}' not found.", style="red")
         return
     
-    editor = NoteEditor(name, note.content)
+    editor = NoteEditorApp(name, note.content)
     editor.run()
 
     if editor.saved_content is not None:
