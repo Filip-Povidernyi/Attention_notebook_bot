@@ -46,7 +46,7 @@ def contacts_main(book: ContactsBook):
             case "show-all":
                 show_all(book)
             case "birthdays":
-                get_upcoming_birthdays()
+                get_upcoming_birthdays(book)
             case "help":
                 print_help(commands)
             case "back":
