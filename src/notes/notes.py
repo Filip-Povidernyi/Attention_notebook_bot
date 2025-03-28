@@ -5,6 +5,7 @@ from .tags import search_notes_by_tag, sort_notes_by_tags
 from rich.console import Console
 from src.notes.node_editor import NoteEditor
 from src.utils.autocomplete import suggest_command
+from src.utils.constants import MAIN_MENU_COMMANDS, NOTE_MENU_COMMANDS
 
 
 """
@@ -27,23 +28,10 @@ def notes_main(notebook: Notebook):
     of the application. It provides options for displaying a test message and exiting the program.
     """
 
-    commands = {
-        "add":      "Add a new note (add <name>)",
-        "view":     "View a note (view <name>)",
-        "search":   "Search for a notes (search <term>)",
-        "edit":     "Edit a note (edit <name>)",
-        "delete":   "Delete a note (delete <name>)",
-        "add_tag": "Add a tag to a note",
-        "remove_tag": "Remove a tag from a note",
-        "view_tags": "View tags of a note",
-        "search_tag": "Search notes by tag (search_tag <tag>)",
-        "sort_by_tags": "Sort notes by number of tags",
-        "help":     "Show this help",
-        "back":     "Go back to the main menu"
-    }
+
 
     console.print("\n\nYou are in Notes now", style="steel_blue")
-    print_help(commands)
+    print_help(NOTE_MENU_COMMANDS)
     list_notes(notebook)
 
     while True:
@@ -94,18 +82,15 @@ def notes_main(notebook: Notebook):
                 sort_notes_by_tags(notebook)
 
             case "help":
-                print_help(commands)
+                print_help(NOTE_MENU_COMMANDS)
 
             case "back":
-                print("\nYou are back to the main menu.")
-                print_help({"1":    "Go to Address Book",
-                            "2":    "Go to your Notes",
-                            "help": "Show this help",
-                            "exit": "Exit the application"})
+                print("\nGoing back to the main menu...")
+                print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
                 # Handle unknown commands
-                suggested = suggest_command(cmd, list(commands.keys()), 0.5)
+                suggested = suggest_command(cmd, list(NOTE_MENU_COMMANDS.keys()), 0.5)
                 if suggested:
                     print(
                         f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")

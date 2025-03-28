@@ -6,10 +6,10 @@ from src.notes.notes import notes_main
 from src.utils.decorators import auto_save_on_error
 from src.utils.autocomplete import suggest_command
 from rich.console import Console
+from src.utils.constants import MAIN_MENU_COMMANDS
 
 
 console = Console()
-
 
 @auto_save_on_error
 def main():
@@ -19,16 +19,10 @@ def main():
     This script runs the main loop, allowing users to interact with the app.
     """
 
-    commands = {
-        "1":    "Go to Address Book",
-        "2":    "Go to your Notes",
-        "help": "Show this help",
-        "exit": "Exit the application"
-    }
 
     console.print("\nWelcome to your Personal Assistant!", style="steel_blue")
     console.print("How can I assist you today?\n", style="steel_blue")
-    print_help(commands)
+    print_help(MAIN_MENU_COMMANDS)
 
     book, notes = load_data()
 
@@ -41,21 +35,21 @@ def main():
             "\nEnter a command (or 'help' for available commands): ").strip().lower()
 
         match cmd:
-            case "1":
+            case "ad" | "1":
                 contacts_main(book)
 
-            case "2":
+            case "note" | "2":
                 notes_main(notes)
 
-            case "help":
-                print_help(commands)
+            case "help" | "3":
+                print_help(MAIN_MENU_COMMANDS)
 
-            case "exit":
+            case "exit" | "4":
                 print("Goodbye, have a nice day!")
                 break
             case _:
 
-                suggested = suggest_command(cmd, list(commands.keys()), 0.5)
+                suggested = suggest_command(cmd, list(MAIN_MENU_COMMANDS.keys()), 0.5)
                 if suggested:
                     console.print(
                         f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?", style="deep_pink4")
