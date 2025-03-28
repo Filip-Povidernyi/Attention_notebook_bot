@@ -29,7 +29,8 @@ def notes_main(notebook: Notebook):
     """
 
 
-    print("\n\nYou are in Notes now")
+
+    console.print("\n\nYou are in Notes now", style="steel_blue")
     print_help(NOTE_MENU_COMMANDS)
     list_notes(notebook)
 

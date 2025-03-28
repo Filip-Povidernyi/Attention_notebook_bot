@@ -41,3 +41,7 @@ class Contact:
                 return f"Номер {old_phone} змінено на номер {new_phone}"
 
         raise ValueError(f"Номер {old_phone} не знайдено")
+
+    def remove_phone(self, rem_phone: str) -> list:
+        self.phones = [
+            phone for phone in self.phones if phone.value != rem_phone]
