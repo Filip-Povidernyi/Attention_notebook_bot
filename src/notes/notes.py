@@ -1,4 +1,3 @@
-from textual import work
 from src.utils.common import print_help
 from .classes.note_book import Notebook, Note
 from src.utils.decorators import auto_save_on_error
@@ -31,14 +30,15 @@ class EditorScreen(ModalScreen[str]):
         Binding("escape,f10", "quit", "Quit", show=True),
     ]
 
-    def __init__(self, name, content):
+    def __init__(self, name, content, editable: bool):
         super().__init__()
         self.x_name = name
         self.x_content = content
         self.saved_content = None
+        self.editable = editable
 
     def compose(self) -> ComposeResult:
-        yield NoteEditor(self.x_name, self.x_content)
+        yield NoteEditor(self.x_name, self.x_content, self.editable)
         
     def action_save(self) -> None:
         editor = self.query_one(NoteEditor)
@@ -90,8 +90,17 @@ class TableApp(App):
     
     BINDINGS = [
         Binding("escape,f10", "quit", "Quit", show=True),
-        Binding("e", "edit", "Edit note", show=True),
+        Binding("a", "add", "Add note", show=True),
+        Binding("v", "edit(False)", "View note", show=True),
+        Binding("e", "edit(True)", "Edit note", show=True),
         Binding("d", "delete", "Delete note", show=True),
+        Binding("s", "search", "Search note", show=True),
+        
+        # Binding("t", "add_tag", "Add tag", show=True),
+        # Binding("r", "remove_tag", "Remove tag", show=True),
+        # Binding("g", "view_tags", "View tags", show=True),
+        # Binding("h", "help", "Help", show=True),
+        # Binding("b", "back", "Back", show=True),
     ]
 
     def __init__(self, notebook: Notebook):
@@ -106,7 +115,7 @@ class TableApp(App):
     def on_data_table_row_highlighted(self, e: DataTable.RowHighlighted):
         self.selected_row = e.row_key
 
-    async def action_edit(self):
+    async def action_edit(self, editable: bool):
         if self.selected_row:
             name = self.selected_row
             notebook = self.notebook
@@ -124,7 +133,7 @@ class TableApp(App):
             
             name = note.name
             content = note.content
-            screen = EditorScreen(name, content)
+            screen = EditorScreen(name, content, editable)
             self.push_screen(screen, on_close)
             
     async def action_delete(self):

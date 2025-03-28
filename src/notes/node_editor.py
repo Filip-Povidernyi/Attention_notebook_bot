@@ -49,15 +49,16 @@ class NoteEditor(Widget):
     }
     """
 
-    def __init__(self, title, initial_content: str = ""):
+    def __init__(self, title, initial_content: str = "", editable: bool = False):
         super().__init__()
         self.title = title
         self.initial_content = initial_content
         self.saved_content = None
+        self.editable = editable
 
     def compose(self) -> ComposeResult:
         yield Header(name=self.title)
-        yield TextArea(self.initial_content)
+        yield TextArea(self.initial_content, show_line_numbers=True, read_only=(not self.editable))
         yield Footer()
 
     def on_mount(self) -> None:
