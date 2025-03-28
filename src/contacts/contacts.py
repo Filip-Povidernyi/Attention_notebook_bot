@@ -34,26 +34,26 @@ def contacts_main(book: ContactsBook):
             "\nEnter a command (or 'help' for available commands): ").strip().lower()
 
         match cmd:
-            case "add":
+            case "add" | "a":
                 result = handlers["add"](book)
                 if result:
                     print(result)
                 else:
                     continue
 
-            case "delete":
+            case "delete" | "d":
                 print(handlers["delete"](book))
 
-            case "show-all":
+            case "show-all" | "sh":
                 handlers["show-all"](book)
 
-            case "edit":
+            case "edit" | "e":
                 print(handlers["edit"](book))
 
-            case "birthdays":
+            case "birthdays" | "b":
                 get_upcoming_birthdays()
 
-            case "find":
+            case "find" | "f":
                 found_contacts = handlers["find"](book)
 
                 if found_contacts:
@@ -65,10 +65,10 @@ def contacts_main(book: ContactsBook):
                 else:
                     print("No contacts found.")
 
-            case "help":
+            case "help" | "h":
                 print_help(CONTACT_MENU_COMMANDS)
 
-            case "back":
+            case "back" | "b":
                 print("\nGoing back to the main menu...")
                 print_help(MAIN_MENU_COMMANDS)
                 break

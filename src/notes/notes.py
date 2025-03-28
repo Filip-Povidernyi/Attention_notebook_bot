@@ -41,48 +41,34 @@ def notes_main(notebook: Notebook):
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
 
         match cmd:
-            case "add":
+            case "add" | "a":
                 add_note(notebook, param)
                 list_notes(notebook)
-
-            case "view":
+            case "view"| "v":
                 view_note(notebook, param)
-
-            case "search":
+            case "search" | "s":
                 search_notes(notebook, param)
-
-            case "edit":
+            case "edit" | "a":
                 edit_note(notebook, param)
                 list_notes(notebook)
-
-            case "delete":
+            case "delete" | "d":
                 delete_note(notebook, param)
                 list_notes(notebook)
-
-            case "add_tag":
-                note_name = input("Enter note name: ").strip()
-                tag = input("Enter tag to add: ").strip()
-                notebook.add_tag_to_note(note_name, tag)
-
+            case "add_tag" | "ad":
+                add_tag(notebook, param)
             case "remove_tag":
-                note_name = input("Enter note name: ").strip()
-                tag = input("Enter tag to remove: ").strip()
-                notebook.remove_tag_from_note(note_name, tag)
+                remove_tag(notebook, param)
+            case "view_tags" | "vt":
+                view_tags(notebook, param)
 
-            case "view_tags":
-                note_name = input("Enter note name: ").strip()
-                notebook.view_tags_of_note(note_name)
 
-            case "search_tag":
-                tag = input("Enter tag to search: ").strip()
-                search_notes_by_tag(notebook, tag)
+            case "search_tag" | "st":
+                search_tag(notebook)
 
-            case "sort_by_tags":
+            case "sort_by_tags" | "srt":
                 sort_notes_by_tags(notebook)
-
             case "help":
                 print_help(NOTE_MENU_COMMANDS)
-
             case "back":
                 print("\nGoing back to the main menu...")
                 print_help(MAIN_MENU_COMMANDS)
@@ -97,6 +83,29 @@ def notes_main(notebook: Notebook):
                 else:
                     print(f"Unknown command '{cmd}'. Please try again.")
 
+def add_tag(notebook: Notebook, note_name):
+    if (not note_name):
+        note_name = input("Enter note name: ").strip()
+
+    tag = input("Enter tag to add: ").strip()
+    notebook.add_tag_to_note(note_name, tag)
+
+def remove_tag(notebook: Notebook, note_name):
+    if (not note_name):
+        note_name = input("Enter note name: ").strip()
+
+    tag = input("Enter tag to remove: ").strip()
+    notebook.remove_tag_from_note(note_name, tag)
+
+def view_tags(notebook: Notebook, note_name):
+    if (not note_name):
+        note_name = input("Enter note name: ").strip()
+
+    notebook.view_tags_of_note(note_name)
+
+def search_tag(notebook: Notebook):
+    tag = input("Enter tag to search: ").strip()
+    search_notes_by_tag(notebook, tag)
 
 def add_note(notebook: Notebook, name):
     if (not name):
