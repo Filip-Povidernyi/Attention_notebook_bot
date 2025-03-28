@@ -1,4 +1,10 @@
 from .classes.contact import Contact
+from .classes.contacts_book import ContactsBook
+from src.utils.autocomplete import suggest_command
+from rich.console import Console
+from rich.table import Table
+
+console = Console()
 
 
 def input_error(func):
@@ -16,11 +22,13 @@ def input_error(func):
 
 
 exit_cmd = ['exit', 'close', 'back']
+commands = ["name", "phone", "address", "email", "birthday"]
 
 
 @input_error
 def add_contact(book):
-
+    console.print(
+        "For back to menu, enter [red]back[/red].\n", style="steel_blue")
     while True:
         try:
             name = input("Enter a name: ").strip().lower()
@@ -31,7 +39,7 @@ def add_contact(book):
                 contact = Contact(name)
                 break
         except ValueError as e:
-            print(e)
+            console.print(f"{e}", style="red")
 
     address = input("Enter address: ").strip().lower()
 
@@ -51,7 +59,7 @@ def add_contact(book):
             else:
                 break
         except ValueError as e:
-            print(e)
+            console.print(f"{e}", style="red")
 
     while True:
         try:
@@ -64,7 +72,7 @@ def add_contact(book):
             else:
                 break
         except ValueError as e:
-            print(e)
+            console.print(f"{e}", style="red")
 
     while True:
         try:
@@ -78,7 +86,7 @@ def add_contact(book):
             else:
                 break
         except ValueError as e:
-            print(e)
+            console.print(f"{e}", style="red")
 
     book.add_contact(contact)
 
@@ -88,13 +96,20 @@ def add_contact(book):
 @input_error
 def delete_contact(book):
 
-    name = input("Enter a name: ").strip().lower()
+    console.print(
+        "For back to menu, enter [red]back[/red].\n", style="steel_blue")
+    name = input("Enter a name to delete: ").strip().lower()
+
     if name in exit_cmd:
         return "You back to menu."
 
     if book.find(name):
-        confirm = input(f"Are you sure you want to delete {name}? (yes/no): ")
-        if confirm.lower() == "yes":
+
+        console.print(
+            f"Are you sure you want to delete {name.title()}? (yes/no):", style="red")
+        confirm = input().strip().lower()
+
+        if confirm == "yes" or confirm == "y":
             book.delete(name)
             return f"Contact {name} deleted successfully!"
         else:
@@ -104,81 +119,154 @@ def delete_contact(book):
 @input_error
 def show_all(book):
 
-    if not book.data:
-        return "No contacts in your phonebook"
-    else:
-        for record in book.data.values():
-            print(f"{record}")
+    if isinstance(book, ContactsBook):
+        if not book.data:
+            console.print(
+                "[bold yellow]You got no contacts yet![/bold yellow]")
+            return
+
+        table = Table(title="Contacts")
+
+        table.add_column("Name", style="cyan", no_wrap=True)
+        table.add_column("Phones", style="magenta")
+        table.add_column("Email", style="blue")
+        table.add_column("Addres", style="green")
+        table.add_column("Birthday", style="yellow")
+
+        for contact in book.data.values():
+            table.add_row(
+                contact.name.value.title(),
+                ", ".join(p.value for p in contact.phones) or "-",
+                contact.email.value if contact.email else "-",
+                contact.address.value.title() if contact.address else "-",
+                contact.birthday.value.strftime(
+                    "%d.%m.%Y") if contact.birthday else "-"
+            )
+
+        console.print(table)
+
+    elif isinstance(book, list):
+        if not book:
+            console.print(
+                "[bold yellow]No matches found![/bold yellow]")
+            return
+
+        table = Table(title="Search results")
+
+        table.add_column("Name", style="cyan", no_wrap=True)
+        table.add_column("Phones", style="magenta")
+        table.add_column("Email", style="blue")
+        table.add_column("Addres", style="green")
+        table.add_column("Birthday", style="yellow")
+
+        for contact in book:
+            table.add_row(
+                contact.name.value.title(),
+                ", ".join(p.value for p in contact.phones) or "-",
+                contact.email.value if contact.email else "-",
+                contact.address.value.title() if contact.address else "-",
+                contact.birthday.value.strftime(
+                    "%d.%m.%Y") if contact.birthday else "-"
+            )
+
+        console.print(table)
 
 
 @input_error
 def edit_contact(book):
 
+    console.print(
+        "For back to menu, enter [red]back[/red].\n", style="steel_blue")
     name = input("Enter a name: ").strip().lower()
+
     if name in exit_cmd:
         return "You back to menu."
 
     if book.find(name):
         contact = book.data[name]
-        print(f"Contact name: {contact.name.value.title()}")
-        print(f"Phones: {', '.join(p.value for p in contact.phones)}")
-
-        if contact.address:
-            print(f"Address: {contact.address.value.title()}")
-        else:
-            print("Address: None")
-
-        if contact.email:
-            print(f"Email: {contact.email.value}")
-        else:
-            print("Email: None")
-
-        if contact.birthday:
-            print(f"Birthday: {contact.birthday.value.strftime('%d.%m.%Y')}")
-        else:
-            print("Birthday: None")
+        show_all([contact])
 
         while True:
             cmd = input(
-                "What do you want to change? (name, phone, address, email, birthday): ").strip().lower()
+                "\nWhat do you want to change? (name, phone, address, email, birthday): ").strip().lower()
 
-            if cmd == "name":
+            if cmd in exit_cmd:
+                return "You back to menu."
+
+            elif cmd == "name":
+
                 new_name = input("Enter a new name: ").strip().lower()
-                contact.name.value = new_name
-                return f"Contact name changed successfully!"
+
+                if new_name != name and not book.find(new_name):
+                    book.data[new_name] = contact
+                    book.data[new_name].name.value = new_name
+                    book.delete(name)
+                console.print(
+                    "Contact name changed successfully!", style="green")
 
             elif cmd == "phone":
                 cmd_phone = input(
-                    "Do you want to add or change a phone? (add/change): ").strip().lower()
+                    "Do you want to add, change or remove a phone? (add/change/remove): ").strip().lower()
 
                 if cmd_phone == "add":
                     new_phone = input("Enter a new phone: ").strip().lower()
                     contact.add_phone(new_phone)
-                    return f"Contact phone added successfully!"
-                else:
+                    console.print(
+                        "Contact phone added successfully!", style="green")
+
+                elif cmd_phone == "change":
                     old_phone = input("Enter a old phone: ").strip().lower()
                     new_phone = input("Enter a new phone: ").strip().lower()
                     contact.edit_phone(old_phone, new_phone)
-                    return f"Contact phone changed successfully!"
+                    console.print(
+                        "Contact phone changed successfully!", style="green")
+
+                elif cmd_phone == "remove":
+                    rem_phone = input(
+                        "Enter a phone number for remove: ").strip().lower()
+                    contact.remove_phone(rem_phone)
+                    console.print(
+                        "Contact phone removed successfully!", style="green")
+
+                else:
+                    suggested = suggest_command(
+                        cmd_phone, ['add', 'change', 'remove'], 0.5)
+                    if suggested:
+                        console.print(
+                            f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?", style="deep_pink4")
+
+                    else:
+                        console.print(
+                            f"Unknown command '{cmd}'. Please try again.", style="deep_pink4")
 
             elif cmd == "address":
                 new_address = input("Enter a new address: ").strip().lower()
                 contact.add_address(new_address)
-                return f"Contact address changed successfully!"
+                console.print(
+                    "Contact address changed successfully!", style="green")
 
             elif cmd == "email":
                 new_email = input("Enter a new email: ").strip().lower()
                 contact.add_email(new_email)
-                return f"Contact email changed successfully!"
+                console.print(
+                    "Contact email changed successfully!", style="green")
 
             elif cmd == "birthday":
                 new_birthday = input(
                     "Enter a new birthday(Use DD.MM.YYYY): ").strip().lower()
                 contact.add_birthday(new_birthday)
-                return f"Contact birthday changed successfully!"
+                console.print(
+                    "Contact birthday changed successfully!", style="green")
 
             else:
-                return "Unknown command. Please try again."
+                suggested = suggest_command(cmd, list(commands.keys()), 0.5)
+                if suggested:
+                    console.print(
+                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?", style="deep_pink4")
+
+                else:
+                    console.print(
+                        f"Unknown command '{cmd}'. Please try again.", style="deep_pink4")
     else:
         return f"Contact {name} not found in your phonebook"
 
@@ -187,31 +275,39 @@ def edit_contact(book):
 def search_contacts(book):
 
     # Шукає контакти за ім'ям, телефоном, email, адресою або днем народження
-
-    query = input("Enter search query: ").strip().lower()
-
-    if query in exit_cmd:
-        return None
+    console.print(
+        "For back to menu, enter [red]back[/red].\n", style="steel_blue")
 
     results = []
 
-    for contact in book.data.values():
-        if query.lower() in contact.name.value.lower():
-            results.append(contact)
+    while True:
+        query = input("Enter search query: ").strip().lower()
 
-        elif contact.email and query.lower() in contact.email.value.lower():
-            results.append(contact)
+        if query in exit_cmd:
+            return None
 
-        elif any(query in phone.value for phone in contact.phones):
-            results.append(contact)
+        for contact in book.data.values():
+            if query.lower() in contact.name.value.lower():
+                results.append(contact)
 
-        elif contact.address and query.lower() in contact.address.value.lower():
-            results.append(contact)
+            elif contact.email and query.lower() in contact.email.value.lower():
+                results.append(contact)
 
-        elif contact.birthday and query in contact.birthday.value.strftime('%d.%m.%Y'):
-            results.append(contact)
+            elif any(query in phone.value for phone in contact.phones):
+                results.append(contact)
 
-    return results
+            elif contact.address and query.lower() in contact.address.value.lower():
+                results.append(contact)
+
+            elif contact.birthday and query in contact.birthday.value.strftime('%d.%m.%Y'):
+                results.append(contact)
+
+        if not results:
+            console.print(
+                "\nNo contacts found matching your query. Try again!\n", style="red")
+            continue
+        else:
+            return results
 
 
 handlers = {

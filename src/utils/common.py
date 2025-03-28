@@ -1,16 +1,23 @@
-"""
-Common utility functions for the application.
+from rich.console import Console
+from rich.table import Table
+from rich.box import ROUNDED
 
-This module provides helper functions that can be reused across different parts 
-of the app.
-"""
 
 def print_help(commands: dict[str, str]):
-    """Prints a formatted list of available commands and their descriptions."""
-    # Find the longest command
-    max_length = max(len(cmd) for cmd in commands)
-    
-    print('\nAvailable commands:')
+    """Prints a formatted list of available commands and their descriptions in a table."""
+    # Створення консолі
+    console = Console()
+
+    # Створення таблиці
+    table = Table(title="", box=ROUNDED, show_header=True)
+
+    # Додавання стовпців
+    table.add_column("Command", style="bold cyan")
+    table.add_column("Description", style="green")
+
+    # Додавання рядків до таблиці
     for cmd, desc in commands.items():
-        # Align descriptions
-        print(f"  <{cmd}>".ljust(max_length + 6) + f"- {desc}")
+        table.add_row(cmd, desc)
+
+    # Виведення таблиці
+    console.print(table)

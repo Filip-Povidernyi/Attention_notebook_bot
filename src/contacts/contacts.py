@@ -3,6 +3,9 @@ from .classes.contacts_book import ContactsBook
 from src.contacts.handler import handlers
 from .birthdays import get_upcoming_birthdays
 from ..utils.decorators import auto_save_on_error
+from ..utils.autocomplete import suggest_command
+from rich.console import Console
+from src.utils.constants import MAIN_MENU_COMMANDS, CONTACT_MENU_COMMANDS
 
 
 """
@@ -22,19 +25,12 @@ def contacts_main(book: ContactsBook):
     waits for user input to perform actions.
     """
 
-    commands = {
-        "add":          "Add a new contact",
-        "delete":       "Delete a contact",
-        "show-all":     "Show all contacts",
-        "edit":         "Edit contact name, phone, etc.",
-        "find":         "Find a contacts by query",
-        "birthdays":    "Show upcoming birthdays",
-        "help":         "Show this help",
-        "back":         "Go back to the main menu"
-    }
 
-    print("\n\nYou are in Address Book now")
-    print_help(commands)
+
+    console = Console()
+    console.print("\n\nYou are in Address Book now", style="steel_blue")
+    print_help(CONTACT_MENU_COMMANDS)
+
 
     while True:
 
@@ -45,18 +41,18 @@ def contacts_main(book: ContactsBook):
             case "add":
                 result = handlers["add"](book)
                 if result:
-                    print(result)
+                    console.print(f"{result}", style="green")
                 else:
                     continue
 
             case "delete":
-                print(handlers["delete"](book))
+                console.print(f"{handlers["delete"](book)}", style="green")
 
             case "show-all":
                 handlers["show-all"](book)
 
             case "edit":
-                print(handlers["edit"](book))
+                console.print(f"{handlers["edit"](book)}", style="green")
 
             case "birthdays":
                 get_upcoming_birthdays()
@@ -65,24 +61,28 @@ def contacts_main(book: ContactsBook):
                 found_contacts = handlers["find"](book)
 
                 if found_contacts:
-                    for contact in found_contacts:
-                        print(contact)
+
+                    handlers["show-all"](found_contacts)
+
                 elif found_contacts is None:
+                  
                     print("You back to menu.")
+                    print_help(MAIN_MENU_COMMANDS)
                 else:
                     print("No contacts found.")
 
             case "help":
-                print_help(commands)
+                print_help(CONTACT_MENU_COMMANDS)
 
             case "back":
                 print("\nGoing back to the main menu...")
-                print_help({
-                    "1":    "Go to Address Book",
-                    "2":    "Go to your Notes",
-                    "help": "Show this help",
-                    "exit": "Exit the application"
-                })
+                print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
-                print("Unknown command. Please try again.")
+                suggested = suggest_command(cmd, list(CONTACT_MENU_COMMANDS.keys()), 0.5)
+                if suggested:
+                    print(
+                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
+
+                else:
+                    print(f"Unknown command '{cmd}'. Please try again.")
