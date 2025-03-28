@@ -5,6 +5,10 @@ from src.contacts.contacts import contacts_main
 from src.notes.notes import notes_main
 from src.utils.decorators import auto_save_on_error
 from src.utils.autocomplete import suggest_command
+from rich.console import Console
+
+
+console = Console()
 
 
 @auto_save_on_error
@@ -22,8 +26,8 @@ def main():
         "exit": "Exit the application"
     }
 
-    print("\nWelcome to your Personal Assistant!")
-    print("How can I assist you today?")
+    console.print("\nWelcome to your Personal Assistant!", style="steel_blue")
+    console.print("How can I assist you today?\n", style="steel_blue")
     print_help(commands)
 
     book, notes = load_data()
@@ -53,11 +57,12 @@ def main():
 
                 suggested = suggest_command(cmd, list(commands.keys()), 0.5)
                 if suggested:
-                    print(
-                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
+                    console.print(
+                        f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?", style="deep_pink4")
 
                 else:
-                    print(f"Unknown command '{cmd}'. Please try again.")
+                    console.print(
+                        f"Unknown command '{cmd}'. Please try again.", style="deep_pink4")
 
 
 if __name__ == "__main__":

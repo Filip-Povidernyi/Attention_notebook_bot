@@ -42,7 +42,7 @@ def notes_main(notebook: Notebook):
         "back":     "Go back to the main menu"
     }
 
-    print("\n\nYou are in Notes now")
+    console.print("\n\nYou are in Notes now", style="steel_blue")
     print_help(commands)
     list_notes(notebook)
 

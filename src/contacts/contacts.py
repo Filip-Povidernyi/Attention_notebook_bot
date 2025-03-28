@@ -4,6 +4,7 @@ from src.contacts.handler import handlers
 from .birthdays import get_upcoming_birthdays
 from ..utils.decorators import auto_save_on_error
 from ..utils.autocomplete import suggest_command
+from rich.console import Console
 
 
 """
@@ -34,7 +35,8 @@ def contacts_main(book: ContactsBook):
         "back":         "Go back to the main menu"
     }
 
-    print("\n\nYou are in Address Book now")
+    console = Console()
+    console.print("\n\nYou are in Address Book now", style="steel_blue")
     print_help(commands)
 
     while True:
@@ -46,18 +48,18 @@ def contacts_main(book: ContactsBook):
             case "add":
                 result = handlers["add"](book)
                 if result:
-                    print(result)
+                    console.print(f"{result}", style="green")
                 else:
                     continue
 
             case "delete":
-                print(handlers["delete"](book))
+                console.print(f"{handlers["delete"](book)}", style="green")
 
             case "show-all":
                 handlers["show-all"](book)
 
             case "edit":
-                print(handlers["edit"](book))
+                console.print(f"{handlers["edit"](book)}", style="green")
 
             case "birthdays":
                 get_upcoming_birthdays()
@@ -66,9 +68,11 @@ def contacts_main(book: ContactsBook):
                 found_contacts = handlers["find"](book)
 
                 if found_contacts:
-                    for contact in found_contacts:
-                        print(contact)
+
+                    handlers["show-all"](found_contacts)
+
                 elif found_contacts is None:
+
                     print("You back to menu.")
                     print_help({
                         "1":    "Go to Address Book",
@@ -76,8 +80,6 @@ def contacts_main(book: ContactsBook):
                         "help": "Show this help",
                         "exit": "Exit the application"
                     })
-                else:
-                    print("No contacts found.")
 
             case "help":
                 print_help(commands)
