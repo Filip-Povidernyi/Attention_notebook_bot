@@ -1,4 +1,6 @@
 from datetime import datetime
+from rich.console import Console
+from rich.text import Text
 
 
 class Note:
@@ -10,7 +12,15 @@ class Note:
         self.tags = []
 
     def __str__(self):
-        return f"Note name: {self.name}, {self.updated_at.strftime('%Y-%m-%d %H:%M:%S')} {self.content[:20]}..."
+        text = Text()
+        text.append(f"Note name: {self.name}", style="bold cyan")
+        text.append(f"\nLast updated: {self.updated_at.strftime('%Y-%m-%d %H:%M:%S')}", style="italic")
+        if self.tags:
+            text.append("\nTags: ", style="bold")
+            text.append(", ".join(self.tags), style="yellow")
+        text.append("\nContent: \n", style="bold")
+        text.append(self.content, style="white")
+        return str(text)
     
     def set_content(self, content):
         self.content = content
