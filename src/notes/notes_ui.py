@@ -6,8 +6,8 @@ from rich.console import Console
 from src.notes.node_editor_ui import NoteEditor, NoteEditorApp
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
-from textual.widgets import Footer, Label, DataTable, Footer, Button, TextArea, Static
-from textual.containers import Grid
+from textual.widgets import Footer, Label, DataTable, Footer, Button, TextArea, Static, Input
+from textual.containers import Grid, Container
 from textual.binding import Binding
 
 """
@@ -129,39 +129,7 @@ class PreviewPanel(Static):
         
 
 class NotesApp(App):
-    CSS = """
-    Screen {
-        align: center middle;
-        layers: base top;
-    }
-    
-    #main_grid {
-        grid-size: 1 2;
-        grid-gutter: 1 2;
-        grid-rows: 1fr 1fr;
-        padding: 0 1;
-        width: 100%;
-        height: 100%;
-    }
-    
-    #table {
-        layer: base;
-        width: 1fr;
-        height: 1fr;
-    }
-    
-    #preview {
-        layer: top;
-        dock: right;
-        width: 30%;
-        height: 100%;
-    }
-
-    DataTable {
-        height: 80%;
-        border: solid green;
-    }
-    """
+    CSS_PATH = "ui_styles/notes_app.tcss"
     
     BINDINGS = [
         Binding("escape,f10", "quit", "Quit", show=True),
@@ -185,11 +153,10 @@ class NotesApp(App):
         self.notebook = notebook
         
     def compose(self) -> ComposeResult:
-        yield Grid(
-            DataTable(id="table"),
-            PreviewPanel(id="preview"),
-            id="main_grid"
-        )
+        with Container(id="container"):
+            yield Input(placeholder="Search note", id="search_input")
+            yield PreviewPanel(id="preview")
+            yield DataTable(id="table")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -250,6 +217,12 @@ class NotesApp(App):
     def action_toggle_preview(self):
         preview = self.query_one("#preview", expect_type=PreviewPanel)
         preview.visible = not preview.visible
+        
+        container = self.query_one("#container", expect_type=Container)
+        if preview.visible:
+            container.remove_class("preview-hidden")
+        else:
+            container.add_class("preview-hidden")
 
 @auto_save_on_error
 def notes_main(notebook: Notebook):
