@@ -33,8 +33,11 @@ def notes_main(notebook: Notebook):
     list_notes(notebook)
 
     while True:
-        cmd_input = input(
-            "\nEnter a command (or 'help' for available commands): ").strip()
+
+        cmd_input = None
+        while not cmd_input:
+            cmd_input = ask_command()
+
         cmd_parts = cmd_input.split(maxsplit=1)
         cmd = cmd_parts[0].lower()
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
@@ -97,6 +100,8 @@ def notes_main(notebook: Notebook):
                 else:
                     print(f"Unknown command '{cmd}'. Please try again.")
 
+def ask_command():
+    return input("\nEnter a command (or 'help' for available commands): ").strip()
 
 def add_note(notebook: Notebook, name):
     if (not name):
