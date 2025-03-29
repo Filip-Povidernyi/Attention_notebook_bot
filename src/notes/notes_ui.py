@@ -7,7 +7,7 @@ from src.notes.node_editor_ui import NoteEditor
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Footer, Label, DataTable, Header, Button, TextArea, Input
-from textual.containers import Grid, Container, Vertical
+from textual.containers import Grid, Container, Vertical, Horizontal
 from textual.binding import Binding
 
 """
@@ -62,6 +62,42 @@ class EditorScreen(ModalScreen[str]):
         """Handle button press to go back."""
         if event.button.id == "back":
             self.app.pop_screen()
+            
+class CreateNoteScreen(ModalScreen[Note]):
+    """The new screen that will be displayed dynamically."""
+    
+    BINDINGS = [
+        Binding("escape,f10", "quit", "Cancel", show=True),
+    ]
+
+    def __init__(self):
+        super().__init__()
+        
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            yield Label("Create new note")
+            yield Input(placeholder="Note name", id="name")
+            yield NoteEditor(initial_content="", editable=True, id="editor")
+            with Horizontal():
+                yield Button("Create", id="create", variant="success")
+                yield Button("Cancel", id="cancel", variant="error")
+        yield Footer()
+            
+    def on_mount(self) -> None:
+        self.query_one("#name", expect_type=Input).focus()
+
+    def on_button_pressed(self, event) -> None:
+        if event.button.id == "cancel":
+            self.dismiss(None)
+        elif event.button.id == "create":
+            name = self.query_one("#name", expect_type=Input)
+            editor = self.query_one("#editor", expect_type=NoteEditor)
+            
+            note = Note(name.value)
+            note.content = editor.get_text()
+            
+            self.dismiss(note)
+            
 
 class AskScreen(ModalScreen[bool]):
     """Screen with a dialog to ask a question."""
@@ -185,6 +221,16 @@ class NotesApp(App):
         search_input = self.query_one("#search_input", expect_type=Input)
         search_input.focus()
         
+    async def action_add(self):
+        screen = CreateNoteScreen()
+        
+        def on_close(note: Note):
+            if note:
+                self.notebook.add_note(note.name, note.content)
+                self.list(self.notebook.notes)
+        
+        self.push_screen(screen, on_close)
+        
     async def action_edit(self, editable: bool):
         if not self.selected_note_id:
             return
@@ -263,9 +309,6 @@ def notes_main(notebook: Notebook):
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
 
         match cmd:
-            case "add":
-                add_note(notebook, param)
-                list_notes(notebook)
             
             case "add_tag":
                 note_name = input("Enter note name: ").strip()
@@ -280,18 +323,3 @@ def notes_main(notebook: Notebook):
                 notebook.view_tags_of_note(note_name)
             case "help":
                 print_help(commands)
-
-
-def add_note(notebook: Notebook, name):
-    if(not name):
-        name = input("Enter note name: ").strip()
-    
-    if(notebook.get_note(name)):
-        console.print(f"Note '{name}' already exists.", style="yellow")
-        return
-
-    editor = NoteEditorApp(name)
-    editor.run()
-
-    notebook.add_note(name, editor.saved_content)
-    console.print(f"Note '{name}' added successfully!", style="green")
