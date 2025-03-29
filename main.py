@@ -45,8 +45,7 @@ def main():
                 print_help(MAIN_MENU_COMMANDS)
 
             case "exit" | "4":
-                print("Goodbye, have a nice day!")
-                break
+                exit_program()
             case _:
 
                 suggested = suggest_command(
@@ -59,6 +58,10 @@ def main():
                     console.print(
                         f"Unknown command '{cmd}'. Please try again.", style="deep_pink4")
 
+
+def exit_program():
+    console.print("Goodbye, have a nice day!", style="steel_blue")
+    exit(0)
 
 if __name__ == "__main__":
     main()
