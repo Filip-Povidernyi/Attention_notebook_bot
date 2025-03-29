@@ -1,3 +1,4 @@
+import os
 from src.contacts.classes.contacts_book import ContactsBook
 from src.notes.classes.note_book import Notebook
 import pickle
@@ -7,8 +8,8 @@ import pickle
 
 
 FILENAMES = {
-    "addressbook": "addressbook.pkl",
-    "notes": "notes.pkl"
+    "addressbook": "db/addressbook.pkl",
+    "notes": "db/notes.pkl"
 }
 
 
@@ -29,8 +30,10 @@ def load_data():
 
 
 def save_data(book, notes):
+    os.makedirs(os.path.dirname(FILENAMES["addressbook"]), exist_ok=True)
     with open(FILENAMES["addressbook"], "wb") as f:
         pickle.dump(book, f)
+    os.makedirs(os.path.dirname(FILENAMES["notes"]), exist_ok=True)
     with open(FILENAMES["notes"], "wb") as f:
         pickle.dump(notes, f)
 

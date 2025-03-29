@@ -70,7 +70,30 @@ Personal Assistant is a command-line application designed to help users manage t
     python main.py
     ```
 
+#### Build Docker image
+
+Execute the following command in the project root directory to build the Docker image:
+```bash
+docker build -t icxodnik988/f4-notebook .
+```
+
+Then deploy the image to the dockerhub repository:
+> [!NOTE] You need to be logged in to push the image to the repository.
+```bash
+docker push icxodnik988/f4-notebook
+```
+
+
 ## Usage
+
+### Docker
+
+> [!NOTE] This is a alternative to install the package as an application using pip.
+To run the application using Docker, you need to have Docker installed on your machine.
+Just run the image from the public dockerhub repository:
+```bash
+docker run -it -v f4-notebook:/app/db icxodnik988/f4-notebook
+```
 
 ### Available Commands
 
