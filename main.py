@@ -48,7 +48,7 @@ def main():
             case "help" | "4":
                 print_help(MAIN_MENU_COMMANDS)
 
-            case "exit" | "4":
+            case "exit" | "5":
                 print("Goodbye, have a nice day!")
                 break
             case _:
