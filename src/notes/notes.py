@@ -5,6 +5,7 @@ from .tags import search_notes_by_tag, sort_notes_by_tags
 from rich.console import Console
 from src.notes.node_editor import NoteEditor
 from src.utils.autocomplete import suggest_command
+from src.notes.utils.print_note import print_note_table
 from src.utils.constants import MAIN_MENU_COMMANDS, NOTE_MENU_COMMANDS
 
 
@@ -178,7 +179,6 @@ def list_notes(notebook: Notebook):
         console.print("No notes found.", style="yellow")
         return
 
-    console.print("\nYour Notes:", style="bold blue")
+    console.print(f"\nYour Notes: ({len(notebook.notes)})", style="bold blue")
     for note in notebook.notes:
-        console.print("─" * 50, style="dim")
-        console.print(note)
+        print_note_table(note)

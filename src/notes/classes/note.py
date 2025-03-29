@@ -1,7 +1,4 @@
 from datetime import datetime
-from rich.console import Console
-from rich.text import Text
-
 
 class Note:
     def __init__(self, name):
@@ -10,6 +7,7 @@ class Note:
         self.updated_at = self.create_at
         self.content = ""
         self.tags = []
+
 
     def __str__(self):
 
