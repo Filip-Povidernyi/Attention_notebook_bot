@@ -46,7 +46,7 @@ class EditorScreen(ModalScreen[str]):
 
     def action_quit(self) -> None:
         editor = self.query_one(NoteEditor)
-        if (self.saved_content == editor.get_text()):
+        if (self.x_content == editor.get_text()):
             self.dismiss(self.saved_content)
             return
         
