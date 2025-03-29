@@ -258,9 +258,6 @@ def notes_main(notebook: Notebook):
                 add_note(notebook, param)
                 list_notes(notebook)
             
-            case "search":
-                search_notes(notebook, param)
-            
             case "add_tag":
                 note_name = input("Enter note name: ").strip()
                 tag = input("Enter tag to add: ").strip()
@@ -274,9 +271,6 @@ def notes_main(notebook: Notebook):
                 notebook.view_tags_of_note(note_name)
             case "help":
                 print_help(commands)
-            
-            case _:
-                print("Unknown command. Please try again.")
 
 
 def add_note(notebook: Notebook, name):
@@ -292,14 +286,3 @@ def add_note(notebook: Notebook, name):
 
     notebook.add_note(name, editor.saved_content)
     console.print(f"Note '{name}' added successfully!", style="green")
-
-def search_notes(notebook: Notebook, term):
-    if(not term):
-        term = input("Enter search term: ").strip()
-
-    notes = notebook.search_notes(term)
-    console.print(f"\nFound {len(notes)} notes matching the term '{term}'.", style="bold blue")
-    for note in notes:
-        console.print("\n" + "─" * 50, style="dim")
-        console.print(note)
-
