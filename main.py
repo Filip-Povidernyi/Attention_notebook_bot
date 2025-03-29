@@ -49,7 +49,7 @@ def main():
             case "help" | "3":
                 print_help(MAIN_MENU_COMMANDS)
 
-            case "exit" | "4":
+            case "exit" | "0":
                 exit_program()
             case _:
 

@@ -86,7 +86,7 @@ def notes_main(notebook: Notebook):
             case "help" | "11":
                 print_help(NOTE_MENU_COMMANDS)
 
-            case "back" | "12":
+            case "back" | "0":
                 print("\nGoing back to the main menu...")
                 print_help(MAIN_MENU_COMMANDS)
                 break

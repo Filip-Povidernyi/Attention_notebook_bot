@@ -77,7 +77,7 @@ def contacts_main(book: ContactsBook):
             case "help" | "7":
                 print_help(CONTACT_MENU_COMMANDS)
 
-            case "back" | "8":
+            case "back" | "0":
                 print("\nGoing back to the main menu...")
                 print_help(MAIN_MENU_COMMANDS)
                 break

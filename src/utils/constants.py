@@ -2,7 +2,7 @@ MAIN_MENU_COMMANDS = {
     "contacts (1)": "Go to Contacts Book",
     "notes    (2)": "Go to your Notes", 
     "help     (3)": "Show this help",
-    "exit     (4)": "Exit the application"
+    "exit     (0)": "Exit the application"
 }
 
 CONTACT_MENU_COMMANDS = {
@@ -13,7 +13,7 @@ CONTACT_MENU_COMMANDS = {
     "find      (5)":    "Find a contact",
     "birthdays (6)":    "Show upcoming birthdays",
     "help      (7)":    "Show this help",
-    "back      (8)":    "Go back to the main menu"
+    "back      (0)":    "Go back to the main menu"
 }
 
 NOTE_MENU_COMMANDS = {
@@ -28,5 +28,5 @@ NOTE_MENU_COMMANDS = {
     "search_tag   (9)":     "Search notes by tag (search_tag <tag>)",
     "sort_by_tags (10)":    "Sort notes by number of tags",
     "help         (11)":    "Show this help",
-    "back         (12)":    "Go back to the main menu"
+    "back         (0)":    "Go back to the main menu"
 }
