@@ -175,8 +175,7 @@ def list_notes(notebook: Notebook):
 
     console.print(f"\nYour Notes: ({len(notebook.notes)})", style="bold blue")
     for note in notebook.notes:
-        console.print("─" * 50, style="dim")
-        console.print(note)
+        print_note_table(note)
 
 def handle_add_tag(notebook: Notebook):
     note_name = input("Enter note name: ").strip()
