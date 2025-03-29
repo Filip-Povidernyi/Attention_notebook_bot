@@ -34,7 +34,7 @@ def main():
     while True:
 
         cmd = input(
-            "\nEnter a command (or 'help' (3) for available commands): ").strip().lower()
+            "\nEnter a command (or 'help' (4) for available commands): ").strip().lower()
 
         if not cmd:
             console.print("Please enter a command from the list of available commands.", 
