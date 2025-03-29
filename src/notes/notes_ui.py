@@ -162,7 +162,16 @@ class NotesApp(App):
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
         table.cursor_type = "row"
+        
+        preview = self.query_one("#preview", expect_type=PreviewPanel)
+        preview.can_focus = False
+        preview.can_focus_children = False
+        
         self.list(self.notebook.notes)
+
+    def on_input_changed(self, event: Input.Changed):
+        if event.input.id == "search_input":
+            self.list(self.notebook.search_notes(event.input.value))
 
     def action_quit(self):
         self.exit(0)
