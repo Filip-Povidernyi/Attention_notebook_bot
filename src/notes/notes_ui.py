@@ -154,7 +154,7 @@ class NotesApp(App):
         with Container(id="container"):
             yield Input(placeholder="Search note", id="search_input")
             yield PreviewPanel(id="preview")
-            yield DataTable(id="table")
+            yield DataTable(id="table").focus()
         yield Footer()
 
     def on_mount(self) -> None:
@@ -178,7 +178,11 @@ class NotesApp(App):
         self.selected_row = e.row_key
         preview = self.query_one("#preview", expect_type=PreviewPanel)
         preview.display_note(self.notebook.get_note(self.selected_row))
-
+        
+    def action_search(self):
+        search_input = self.query_one("#search_input", expect_type=Input)
+        search_input.focus()
+        
     async def action_edit(self, editable: bool):
         if not self.selected_row:
             return
