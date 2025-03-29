@@ -7,7 +7,7 @@ from src.notes.node_editor_ui import NoteEditor, NoteEditorApp
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Footer, Label, DataTable, Footer, Button, TextArea, Static, Input
-from textual.containers import Grid, Container
+from textual.containers import Grid, Container, Vertical
 from textual.binding import Binding
 
 """
@@ -110,26 +110,24 @@ class AskScreen(ModalScreen[bool]):
         else:
             self.dismiss(False)
 
-class PreviewPanel(Static):
-    CSS = """
-    PreviewPanel {
-        width: 100%;
-        height: 100%;
-    }
-    """
+class PreviewPanel(Vertical):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
-        yield TextArea(read_only=True)
+        yield Label(id="name", classes="name")
+        yield Label(id="updated_at", classes="date")
+        # TODO: Add tags
+        yield TextArea(id="text", classes="text", read_only=True)
         
     def display_note(self, note: Note):
-        self.query_one(TextArea).text = note.content
-        
+        self.query_one("#name", expect_type=Label).update(note.name)
+        self.query_one("#updated_at", expect_type=Label).update(note.updated_at.strftime("%Y-%m-%d %H:%M:%S"))
+        self.query_one("#text", expect_type=TextArea).text = note.content
 
 class NotesApp(App):
-    CSS_PATH = "ui_styles/notes_app.tcss"
+    CSS_PATH = ["ui_styles/notes_app.tcss", "ui_styles/preview_panel.tcss"]
     
     BINDINGS = [
         Binding("escape,f10", "quit", "Quit", show=True),
@@ -241,6 +239,8 @@ def notes_main(notebook: Notebook):
     This function presents a GUI interface to the user for interacting with the notes section 
     of the application. It provides options for displaying a test message and exiting the program.
     """
+    
+    console.set_window_title("vNotes")
     
     app = NotesApp(notebook)
     app.run()
