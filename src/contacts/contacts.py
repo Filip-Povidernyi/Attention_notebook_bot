@@ -55,7 +55,7 @@ def contacts_main(book: ContactsBook):
                 console.print(f"{handlers["edit"](book)}", style="green")
 
             case "birthdays":
-                get_upcoming_birthdays()
+                get_upcoming_birthdays(book)
 
             case "find":
                 found_contacts = handlers["find"](book)
