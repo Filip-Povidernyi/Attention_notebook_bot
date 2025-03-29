@@ -39,52 +39,63 @@ def notes_main(notebook: Notebook):
         while not cmd_input:
             cmd_input = ask_command()
 
+            if not cmd_input:
+                console.print("Please enter a command from the list of available commands.", 
+                            style="deep_pink4")
+                continue
+
         cmd_parts = cmd_input.split(maxsplit=1)
         cmd = cmd_parts[0].lower()
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
 
         match cmd:
-            case "add":
+            case "add" | "1":
                 add_note(notebook, param)
                 list_notes(notebook)
 
-            case "view":
+            case "view" | "2":
                 view_note(notebook, param)
 
-            case "search":
+            case "search" | "3":
                 search_notes(notebook, param)
 
-            case "edit":
+            case "edit" | "4":
                 edit_note(notebook, param)
                 list_notes(notebook)
 
-            case "delete":
+            case "delete" | "5":
                 delete_note(notebook, param)
                 list_notes(notebook)
 
-            case "add_tag":
-                handle_add_tag(notebook)
+            case "add_tag" | "6":
+                console.print(f"{handle_add_tag(notebook)}", style="green")
 
-            case "remove_tag":
-                handle_remove_tag(notebook)
+            case "remove_tag" | "7":
+                console.print(f"{handle_remove_tag(notebook)}", style="green")
 
-            case "view_tags":
-                handle_view_tags(notebook)
+            case "view_tags" | "8":
+                console.print(f"{handle_view_tags(notebook)}", style="green")
 
-            case "search_tag":
-                handle_search_tag(notebook)
+            case "search_tag" | "9":
+                console.print(f"{handle_search_tag(notebook)}", style="green")
 
-            case "sort_by_tags":
-                handle_sort_by_tags(notebook)
+            case "sort_by_tags" | "10":
+                console.print(
+                    f"{handle_sort_by_tags(notebook)}", style="green")
 
-            case "help":
+            case "help" | "11":
                 print_help(NOTE_MENU_COMMANDS)
 
-            case "back":
+            case "back" | "0":
                 print("\nGoing back to the main menu...")
                 print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
+
+                if not cmd:
+                    console.print("Please enter a command from the list of available commands.", 
+                                style="deep_pink4")
+                    continue
                 # Handle unknown commands
                 suggested = suggest_command(
                     cmd, list(NOTE_MENU_COMMANDS.keys()), 0.5)
@@ -95,8 +106,10 @@ def notes_main(notebook: Notebook):
                 else:
                     print(f"Unknown command '{cmd}'. Please try again.")
 
+
 def ask_command():
-    return input("\nEnter a command (or 'help' for available commands): ").strip()
+    return input("\nEnter a command (or 'help' (11) for available commands): ").strip()
+
 
 def add_note(notebook: Notebook, name):
     while not name:
@@ -114,6 +127,7 @@ def add_note(notebook: Notebook, name):
 
 
 def view_note(notebook: Notebook, name):
+
     while not name:
         name = input("Enter note name: ").strip()
 
@@ -125,6 +139,7 @@ def view_note(notebook: Notebook, name):
 
 
 def search_notes(notebook: Notebook, term):
+
     while not term:
         term = input("Enter search term: ").strip()
 
@@ -162,9 +177,9 @@ def delete_note(notebook: Notebook, name):
 
     success = notebook.delete_note(name)
     if success:
-        print(f"Note '{name}' deleted successfully.")
+        console.print(f"Note '{name}' deleted successfully.", style="green")
     else:
-        print(f"Note '{name}' not found.")
+        console.print(f"Note '{name}' not found.", style="yellow")
 
 
 def list_notes(notebook: Notebook):
@@ -177,32 +192,37 @@ def list_notes(notebook: Notebook):
     for note in notebook.notes:
         print_note_table(note)
 
+
 def handle_add_tag(notebook: Notebook):
     note_name = input("Enter note name: ").strip()
     tag = input("Enter tag to add: ").strip()
     if add_tag_to_note(notebook, note_name, tag):
-        print(f"Tag '{tag}' added.")
+        return f"Tag '{tag}' added."
     else:
-        print("Tag not added.")
+        return "Tag not added."
+
 
 def handle_remove_tag(notebook: Notebook):
     note_name = input("Enter note name: ").strip()
     tag = input("Enter tag to remove: ").strip()
     if remove_tag_from_note(notebook, note_name, tag):
-        print(f"Tag '{tag}' removed.")
+        return f"Tag '{tag}' removed."
     else:
-        print("Tag not removed (may not exist).")
+        return "Tag not removed (may not exist)."
+
 
 def handle_view_tags(notebook: Notebook):
     note_name = input("Enter note name: ").strip()
     tags = view_tags_of_note(notebook, note_name)
-    print("Tags:", ", ".join(tags) if tags else "No tags found.")
+    return "Tags:", ", ".join(tags) if tags else "No tags found."
+
 
 def handle_search_tag(notebook: Notebook):
     tag = input("Enter tag to search: ").strip()
     notes = search_notes_by_tag(notebook, tag)
-    print("\nNotes found:", [note.name for note in notes] if notes else "No notes found.")
+    return "\nNotes found:", [note.name for note in notes] if notes else "No notes found."
+
 
 def handle_sort_by_tags(notebook: Notebook):
     sorted_notes = sort_notes_by_tags(notebook)
-    print("\nSorted Notes:", [note.name for note in sorted_notes])
+    return "\nSorted Notes:", [note.name for note in sorted_notes]
