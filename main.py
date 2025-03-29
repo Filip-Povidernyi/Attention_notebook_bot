@@ -34,6 +34,11 @@ def main():
         cmd = input(
             "\nEnter a command (or 'help' for available commands): ").strip().lower()
 
+        if not cmd:
+            console.print("Please enter a command from the list of available commands.", 
+                          style="deep_pink4")
+            continue
+
         match cmd:
             case "ad" | "1":
                 contacts_main(book)

@@ -25,8 +25,6 @@ def contacts_main(book: ContactsBook):
     waits for user input to perform actions.
     """
 
-
-
     console = Console()
     console.print("\n\nYou are in Address Book now", style="steel_blue")
     print_help(CONTACT_MENU_COMMANDS)
@@ -36,6 +34,11 @@ def contacts_main(book: ContactsBook):
 
         cmd = input(
             "\nEnter a command (or 'help' for available commands): ").strip().lower()
+        
+        if not cmd:
+            console.print("Please enter a command from the list of available commands.", 
+                          style="deep_pink4")
+            continue
 
         match cmd:
             case "add":

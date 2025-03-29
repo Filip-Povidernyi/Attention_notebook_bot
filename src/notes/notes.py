@@ -39,6 +39,11 @@ def notes_main(notebook: Notebook):
         while not cmd_input:
             cmd_input = ask_command()
 
+            if not cmd_input:
+                console.print("Please enter a command from the list of available commands.", 
+                            style="deep_pink4")
+                continue
+
         cmd_parts = cmd_input.split(maxsplit=1)
         cmd = cmd_parts[0].lower()
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
@@ -86,6 +91,11 @@ def notes_main(notebook: Notebook):
                 print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
+
+                if not cmd:
+                    console.print("Please enter a command from the list of available commands.", 
+                                style="deep_pink4")
+                    continue
                 # Handle unknown commands
                 suggested = suggest_command(
                     cmd, list(NOTE_MENU_COMMANDS.keys()), 0.5)
