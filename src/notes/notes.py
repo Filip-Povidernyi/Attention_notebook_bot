@@ -5,6 +5,7 @@ from .tags import search_notes_by_tag, sort_notes_by_tags
 from rich.console import Console
 from src.notes.node_editor import NoteEditor
 from src.utils.autocomplete import suggest_command
+from src.notes.utils.print_note import print_note_table
 from src.utils.constants import MAIN_MENU_COMMANDS, NOTE_MENU_COMMANDS
 
 
@@ -33,8 +34,11 @@ def notes_main(notebook: Notebook):
     list_notes(notebook)
 
     while True:
-        cmd_input = input(
-            "\nEnter a command (or 'help' for available commands): ").strip()
+
+        cmd_input = None
+        while not cmd_input:
+            cmd_input = ask_command()
+
         cmd_parts = cmd_input.split(maxsplit=1)
         cmd = cmd_parts[0].lower()
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
@@ -97,9 +101,11 @@ def notes_main(notebook: Notebook):
                 else:
                     print(f"Unknown command '{cmd}'. Please try again.")
 
+def ask_command():
+    return input("\nEnter a command (or 'help' for available commands): ").strip()
 
 def add_note(notebook: Notebook, name):
-    if (not name):
+    while not name:
         name = input("Enter note name: ").strip()
 
     if (notebook.get_note(name)):
@@ -114,7 +120,7 @@ def add_note(notebook: Notebook, name):
 
 
 def view_note(notebook: Notebook, name):
-    if (not name):
+    while not name:
         name = input("Enter note name: ").strip()
 
     note = notebook.get_note(name)
@@ -125,7 +131,7 @@ def view_note(notebook: Notebook, name):
 
 
 def search_notes(notebook: Notebook, term):
-    if (not term):
+    while not term:
         term = input("Enter search term: ").strip()
 
     notes = notebook.search_notes(term)
@@ -137,7 +143,7 @@ def search_notes(notebook: Notebook, term):
 
 
 def edit_note(notebook: Notebook, name):
-    if (not name):
+    while not name:
         name = input("Enter note name: ").strip()
 
     note = notebook.get_note(name)
@@ -157,7 +163,7 @@ def edit_note(notebook: Notebook, name):
 
 
 def delete_note(notebook: Notebook, name):
-    if (not name):
+    while not name:
         name = input("Enter note name: ").strip()
 
     success = notebook.delete_note(name)
@@ -173,7 +179,6 @@ def list_notes(notebook: Notebook):
         console.print("No notes found.", style="yellow")
         return
 
-    console.print("\nYour Notes:", style="bold blue")
+    console.print(f"\nYour Notes: ({len(notebook.notes)})", style="bold blue")
     for note in notebook.notes:
-        console.print("─" * 50, style="dim")
-        console.print(note)
+        print_note_table(note)
