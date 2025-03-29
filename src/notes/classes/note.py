@@ -3,7 +3,8 @@ from rich.text import Text
 
 
 class Note:
-    def __init__(self, name):
+    def __init__(self, name, id=None):
+        self.id = id
         self.name = name
         self.create_at = datetime.now()
         self.updated_at = self.create_at

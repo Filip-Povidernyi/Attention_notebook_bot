@@ -1,7 +1,8 @@
 MAIN_MENU_COMMANDS = {
     "contacts (1)": "Go to Contacts Book",
-    "notes    (2)": "Go to your Notes", 
-    "help     (3)": "Show this help",
+    "notes    (2)": "Go to your Notes",
+    "vnotes   (3)": "Go to your Notes (UI)",
+    "help     (4)": "Show this help",
     "exit     (0)": "Exit the application"
 }
 
