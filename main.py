@@ -66,7 +66,7 @@ def main():
 
 def exit_program():
     console.print("Goodbye, have a nice day!", style="steel_blue")
-    exit(0)
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
