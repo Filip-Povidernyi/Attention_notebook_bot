@@ -49,44 +49,44 @@ def notes_main(notebook: Notebook):
         param = cmd_parts[1] if len(cmd_parts) > 1 else None
 
         match cmd:
-            case "add":
+            case "add" | "1":
                 add_note(notebook, param)
                 list_notes(notebook)
 
-            case "view":
+            case "view" | "2":
                 view_note(notebook, param)
 
-            case "search":
+            case "search" | "3":
                 search_notes(notebook, param)
 
-            case "edit":
+            case "edit" | "4":
                 edit_note(notebook, param)
                 list_notes(notebook)
 
-            case "delete":
+            case "delete" | "5":
                 delete_note(notebook, param)
                 list_notes(notebook)
 
-            case "add_tag":
+            case "add_tag" | "6":
                 console.print(f"{handle_add_tag(notebook)}", style="green")
 
-            case "remove_tag":
+            case "remove_tag" | "7":
                 console.print(f"{handle_remove_tag(notebook)}", style="green")
 
-            case "view_tags":
+            case "view_tags" | "8":
                 console.print(f"{handle_view_tags(notebook)}", style="green")
 
-            case "search_tag":
+            case "search_tag" | "9":
                 console.print(f"{handle_search_tag(notebook)}", style="green")
 
-            case "sort_by_tags":
+            case "sort_by_tags" | "10":
                 console.print(
                     f"{handle_sort_by_tags(notebook)}", style="green")
 
-            case "help":
+            case "help" | "11":
                 print_help(NOTE_MENU_COMMANDS)
 
-            case "back":
+            case "back" | "12":
                 print("\nGoing back to the main menu...")
                 print_help(MAIN_MENU_COMMANDS)
                 break
@@ -108,7 +108,7 @@ def notes_main(notebook: Notebook):
 
 
 def ask_command():
-    return input("\nEnter a command (or 'help' for available commands): ").strip()
+    return input("\nEnter a command (or 'help' (11) for available commands): ").strip()
 
 
 def add_note(notebook: Notebook, name):

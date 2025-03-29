@@ -32,7 +32,7 @@ def main():
     while True:
 
         cmd = input(
-            "\nEnter a command (or 'help' for available commands): ").strip().lower()
+            "\nEnter a command (or 'help' (3) for available commands): ").strip().lower()
 
         if not cmd:
             console.print("Please enter a command from the list of available commands.", 
@@ -40,10 +40,10 @@ def main():
             continue
 
         match cmd:
-            case "ad" | "1":
+            case "contacts" | "1":
                 contacts_main(book)
 
-            case "note" | "2":
+            case "notes" | "2":
                 notes_main(notes)
 
             case "help" | "3":
