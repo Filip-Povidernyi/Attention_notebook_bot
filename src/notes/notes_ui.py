@@ -175,55 +175,58 @@ class NotesApp(App):
         self.exit(0)
 
     def on_data_table_row_highlighted(self, e: DataTable.RowHighlighted):
-        self.selected_row = e.row_key
+        self.selected_note_id = e.row_key.value
         preview = self.query_one("#preview", expect_type=PreviewPanel)
-        preview.display_note(self.notebook.get_note(self.selected_row))
+        preview.display_note(self.notebook.get_note(self.selected_note_id))
         
     def action_search(self):
         search_input = self.query_one("#search_input", expect_type=Input)
         search_input.focus()
         
     async def action_edit(self, editable: bool):
-        if not self.selected_row:
+        if not self.selected_note_id:
             return
         
-        name = self.selected_row
-        note = self.notebook.get_note(name)
+        note = self.notebook.get_note(self.selected_note_id)
 
         if not note:
             return
             
         def on_close(content: str):
             if content:
-                self.notebook.edit_note(name, content)
+                self.notebook.edit_note(note.name, content)
                 self.list(self.notebook.notes)
         
         screen = EditorScreen(note.name, note.content, editable, on_close=self.handle_editor_quit)
         self.push_screen(screen, on_close)
     
     async def action_delete(self):
-        if not self.selected_row:
+        if not self.selected_note_id:
+            return
+        
+        note = self.notebook.get_note(self.selected_note_id)
+        if not note:
             return
         
         def on_close(result: bool):
             if result:
-                self.notebook.delete_note(self.selected_row)
-                console.print(f"Note '{self.selected_row}' deleted successfully.", style="green")
+                self.notebook.delete_note(note.id)
+                console.print(f"Note '{note.name}' deleted successfully.", style="green")
         
-        screen = AskScreen(f"Are you sure you want to delete note '{self.selected_row}'?")
+        screen = AskScreen(f"Are you sure you want to delete note '{note.name}'?")
         self.push_screen(screen, on_close)
         
     def handle_editor_quit(self, question: str, on_close: Callable[[bool], None]):
         self.push_screen(AskScreen(question), on_close)
 
-    def list(self, notes):
+    def list(self, notes: list[Note]):
         table = self.query_one(DataTable)
         table.clear()
         table.columns.clear()
         table.add_columns("Name", "Updated At", "Content")
 
         for n in notes:
-            table.add_row(n.name, n.updated_at, n.content[:20], key=n.name)
+            table.add_row(n.name, n.updated_at, n.content[:20], key=n.id)
             
     def action_toggle_preview(self):
         preview = self.query_one("#preview", expect_type=PreviewPanel)
