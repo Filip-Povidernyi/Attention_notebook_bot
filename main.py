@@ -55,7 +55,7 @@ def main():
                 print_help(MAIN_MENU_COMMANDS)
 
             case "exit" | "0":
-                console.print(f"{exit_program()}", style="steel_blue")
+                exit_program()
 
             case _:
 
@@ -71,7 +71,7 @@ def main():
 
 
 def exit_program():
-    return "Goodbye, have a nice day!"
+    console.print("Goodbye, have a nice day!", style="steel_blue")
     sys.exit(0)
 
 if __name__ == "__main__":
