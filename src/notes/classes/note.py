@@ -1,4 +1,6 @@
 from datetime import datetime
+from rich.text import Text
+
 
 class Note:
     def __init__(self, name):
@@ -7,7 +9,6 @@ class Note:
         self.updated_at = self.create_at
         self.content = ""
         self.tags = []
-
 
     def set_content(self, content):
         self.content = content if content is not None else ""
