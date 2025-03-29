@@ -3,10 +3,10 @@ from src.utils.common import print_help
 from .classes.note_book import Notebook, Note
 from src.utils.decorators import auto_save_on_error
 from rich.console import Console
-from src.notes.node_editor_ui import NoteEditor, NoteEditorApp
+from src.notes.node_editor_ui import NoteEditor
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
-from textual.widgets import Footer, Label, DataTable, Footer, Button, TextArea, Static, Input
+from textual.widgets import Footer, Label, DataTable, Header, Button, TextArea, Input
 from textual.containers import Grid, Container, Vertical
 from textual.binding import Binding
 
@@ -37,8 +37,10 @@ class EditorScreen(ModalScreen[str]):
         self.on_close = on_close
         
     def compose(self) -> ComposeResult:
-        yield NoteEditor(self.x_name, self.x_content, self.editable)
-        
+        yield Header(name=self.x_name)
+        yield NoteEditor(initial_content=self.x_content, editable=self.editable)
+        yield Footer()
+
     def action_save(self) -> None:
         editor = self.query_one(NoteEditor)
         self.saved_content = editor.get_text()
@@ -127,7 +129,7 @@ class PreviewPanel(Vertical):
         self.query_one("#text", expect_type=TextArea).text = note.content
 
 class NotesApp(App):
-    CSS_PATH = ["ui_styles/notes_app.tcss", "ui_styles/preview_panel.tcss"]
+    CSS_PATH = ["ui_styles/notes_app.tcss", "ui_styles/preview_panel.tcss", "ui_styles/editor.tcss"]
     
     BINDINGS = [
         Binding("escape,f10", "quit", "Quit", show=True),

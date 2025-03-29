@@ -1,0 +1,9 @@
+EditorScreen {
+    align: center middle;
+
+    .editor {
+        height: 40%;
+        width: 100%;
+        border: solid green;
+    }
+}
