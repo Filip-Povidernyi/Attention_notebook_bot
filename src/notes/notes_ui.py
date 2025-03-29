@@ -1,3 +1,4 @@
+from typing import Callable
 from src.utils.common import print_help
 from .classes.note_book import Notebook, Note
 from src.utils.decorators import auto_save_on_error
@@ -27,13 +28,14 @@ class EditorScreen(ModalScreen[str]):
         Binding("escape,f10", "quit", "Quit", show=True),
     ]
 
-    def __init__(self, name, content, editable: bool):
+    def __init__(self, name, content, editable: bool, on_close: Callable[[str, Callable[[bool], None]], None]):
         super().__init__()
         self.x_name = name
         self.x_content = content
         self.saved_content = None
         self.editable = editable
-
+        self.on_close = on_close
+        
     def compose(self) -> ComposeResult:
         yield NoteEditor(self.x_name, self.x_content, self.editable)
         
@@ -43,8 +45,16 @@ class EditorScreen(ModalScreen[str]):
         self.notify("Content saved!")
 
     def action_quit(self) -> None:
-        self.dismiss(self.saved_content)
+        editor = self.query_one(NoteEditor)
+        if (self.saved_content == editor.get_text()):
+            self.dismiss(self.saved_content)
+            return
         
+        def on_close(result: bool):
+            if result:
+                self.dismiss(None)
+            
+        self.on_close("Unsaved changes, are you sure you want to quit?", on_close)
 
     def on_button_pressed(self, event) -> None:
         """Handle button press to go back."""
@@ -210,7 +220,7 @@ class NotesApp(App):
                 self.notebook.edit_note(name, content)
                 self.list(self.notebook.notes)
         
-        screen = EditorScreen(note.name, note.content, editable)
+        screen = EditorScreen(note.name, note.content, editable, on_close=self.handle_editor_quit)
         self.push_screen(screen, on_close)
     
     async def action_delete(self):
@@ -224,6 +234,9 @@ class NotesApp(App):
         
         screen = AskScreen(f"Are you sure you want to delete note '{self.selected_row}'?")
         self.push_screen(screen, on_close)
+        
+    def handle_editor_quit(self, question: str, on_close: Callable[[bool], None]):
+        self.push_screen(AskScreen(question), on_close)
 
     def list(self, notes):
         table = self.query_one(DataTable)
