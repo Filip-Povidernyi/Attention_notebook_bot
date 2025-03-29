@@ -3,6 +3,9 @@ from .classes.note_book import Notebook
 from src.utils.decorators import auto_save_on_error
 from .tags import add_tag_to_note, remove_tag_from_note, view_tags_of_note, search_notes_by_tag, sort_notes_by_tags
 from rich.console import Console
+from rich.table import Table
+from rich.box import ROUNDED
+from rich.text import Text
 from src.notes.node_editor import NoteEditor
 from src.utils.autocomplete import suggest_command
 from src.notes.utils.print_note import print_note_table
@@ -196,13 +199,32 @@ def handle_remove_tag(notebook: Notebook):
 def handle_view_tags(notebook: Notebook):
     note_name = input("Enter note name: ").strip()
     tags = view_tags_of_note(notebook, note_name)
-    print("Tags:", ", ".join(tags) if tags else "No tags found.")
+    if not tags:
+        console.print("No tags found for this note.", style="yellow")
+        return
+    title_text = Text(f"Tags for Note: {note_name}", style="bold blue", overflow="fold")  
+    table = Table(title=title_text, box=ROUNDED, show_header=True, min_width=35)
+    table.add_column("Tags", style="bold")
+    for tag in tags:
+        table.add_row(tag)
+    console = Console()
+    console.print(table)
 
 def handle_search_tag(notebook: Notebook):
     tag = input("Enter tag to search: ").strip()
     notes = search_notes_by_tag(notebook, tag)
-    print("\nNotes found:", [note.name for note in notes] if notes else "No notes found.")
+    if not notes:
+        console.print(f"No notes found with tag: {tag}", style="yellow")
+        return
+    console.print(f"\nNotes with tag '{tag}':", style="bold blue")
+    for note in notes:
+        print_note_table(note)
 
 def handle_sort_by_tags(notebook: Notebook):
     sorted_notes = sort_notes_by_tags(notebook)
-    print("\nSorted Notes:", [note.name for note in sorted_notes])
+    if not sorted_notes:
+        console.print("No notes found.", style="yellow")
+        return
+    console.print("\nSorted Notes:", style="bold blue")
+    for note in sorted_notes:
+        print_note_table(note)
