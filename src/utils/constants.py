@@ -1,8 +1,9 @@
 MAIN_MENU_COMMANDS = {
     "ad | 1":    "Go to Address Book",
     "note | 2":    "Go to your Notes", 
-    "help | 3": "Show this help",
-    "exit | 4": "Exit the application"
+    "vnotes | 3": "Go to your Notes (UI)",
+    "help | 4": "Show this help",
+    "exit | 5": "Exit the application"
 }
 
 NOTE_MENU_COMMANDS = {

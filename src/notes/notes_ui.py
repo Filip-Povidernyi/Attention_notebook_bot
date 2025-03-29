@@ -2,7 +2,7 @@ from src.utils.common import print_help
 from .classes.note_book import Notebook, Note
 from src.utils.decorators import auto_save_on_error
 from rich.console import Console
-from src.notes.node_editor import NoteEditor, NoteEditorApp
+from src.notes.node_editor_ui import NoteEditor, NoteEditorApp
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Footer, Label, ListItem, ListView
@@ -75,15 +75,23 @@ class AskScreen(ModalScreen[bool]):
         else:
             self.dismiss(False)
 
-class TableApp(App):
+class NotesApp(App):
     CSS = """
     Screen {
         align: center middle;
     }
+    
+    #main_grid {
+        grid-size: 1 2;
+        grid-gutter: 1 2;
+        grid-rows: 1fr 3;
+        padding: 0 1;
+        width: 100%;
+        height: 100%;
+    }
 
     DataTable {
         height: 80%;
-        width: 90%;
         border: solid green;
     }
     """
@@ -106,8 +114,18 @@ class TableApp(App):
     def __init__(self, notebook: Notebook):
         super().__init__()
         self.notebook = notebook
+        
+    def compose(self) -> ComposeResult:
+        yield Grid(
+            DataTable(),
+            Footer(),
+            id="main_grid"
+        )
 
-    current_sorts: set = set()
+    def on_mount(self) -> None:
+        table = self.query_one(DataTable)
+        table.cursor_type = "row"
+        self.list(self.notebook.notes)
 
     def action_quit(self):
         self.exit(0)
@@ -116,26 +134,23 @@ class TableApp(App):
         self.selected_row = e.row_key
 
     async def action_edit(self, editable: bool):
-        if self.selected_row:
-            name = self.selected_row
-            notebook = self.notebook
+        if not self.selected_row:
+            return
+        
+        name = self.selected_row
+        note = self.notebook.get_note(name)
 
-            note = notebook.get_note(name)
-
-            if not note:
-                console.print(f"Note '{name}' not found.", style="red")
-                return
+        if not note:
+            return
             
-            def on_close(content: str):
-                if content:
-                    notebook.edit_note(name, content)
-                    console.print(f"Note '{name}' updated successfully!", style="green")
-            
-            name = note.name
-            content = note.content
-            screen = EditorScreen(name, content, editable)
-            self.push_screen(screen, on_close)
-            
+        def on_close(content: str):
+            if content:
+                self.notebook.edit_note(name, content)
+                self.list(self.notebook.notes)
+        
+        screen = EditorScreen(note.name, note.content, editable)
+        self.push_screen(screen, on_close)
+    
     async def action_delete(self):
         if not self.selected_row:
             return
@@ -148,62 +163,28 @@ class TableApp(App):
         screen = AskScreen(f"Are you sure you want to delete note '{self.selected_row}'?")
         self.push_screen(screen, on_close)
 
-    def compose(self) -> ComposeResult:
-        yield DataTable()
-        yield Footer()
-
-    def on_mount(self) -> None:
-        table = self.query_one(DataTable)
-        table.cursor_type = "row"
-        self.list(self.notebook.notes)
-
     def list(self, notes):
         table = self.query_one(DataTable)
         table.clear()
-        for col in ["name", "updated_at", "content"]:
-            table.add_column(col, key=col)
+        table.columns.clear()
+        table.add_columns("Name", "Updated At", "Content")
 
         for n in notes:
-            table.add_row((n.name, n.updated_at, n.content[:20]), key=n.name)
+            table.add_row(n.name, n.updated_at, n.content[:20], key=n.name)
 
 @auto_save_on_error
 def notes_main(notebook: Notebook):
     """
     Main loop for managing notes in the application.
 
-    This function presents a simple interface to the user for interacting with the notes section 
+    This function presents a GUI interface to the user for interacting with the notes section 
     of the application. It provides options for displaying a test message and exiting the program.
     """
-
-    commands = {
-        "add":      "Add a new note (add <name>)",
-        "view":     "View a note (view <name>)",
-        "view_all":     "View all notes",
-        "search":   "Search for a notes (search <term>)",
-        "edit":     "Edit a note (edit <name>)",
-        "delete":   "Delete a note (delete <name>)",
-        "add_tag": "Add a tag to a note",
-        "remove_tag": "Remove a tag from a note",
-        "view_tags": "View tags of a note",
-        "help":     "Show this help",
-        "back":     "Go back to the main menu"
-    }
-
-    print("\n\nYou are in Notes now")
-    print_help(commands)
-
-    for node in notebook.notes:
-        console.print(node)
     
-
-    # app = ListViewExample()
-    app = TableApp(notebook)
+    app = NotesApp(notebook)
     app.run()
-
-    # app.list(notebook.notes)
-
-    # list_notes(notebook)
-    # return
+    
+    return
 
     while True:
         cmd_input = input("\nEnter a command (or 'help' for available commands): ").strip()
@@ -215,18 +196,10 @@ def notes_main(notebook: Notebook):
             case "add":
                 add_note(notebook, param)
                 list_notes(notebook)
-            case "view":
-                view_note(notebook, param)
-            case "view_all":
-                list_notes(notebook)
+            
             case "search":
                 search_notes(notebook, param)
-            case "edit":
-                edit_note(notebook, param)
-                list_notes(notebook)
-            case "delete":
-                delete_note(notebook, param)
-                list_notes(notebook)
+            
             case "add_tag":
                 note_name = input("Enter note name: ").strip()
                 tag = input("Enter tag to add: ").strip()
@@ -240,13 +213,7 @@ def notes_main(notebook: Notebook):
                 notebook.view_tags_of_note(note_name)
             case "help":
                 print_help(commands)
-            case "back":
-                print("\nYou are back to the main menu.")
-                print_help({"1":    "Go to Address Book",
-                            "2":    "Go to your Notes",
-                            "help": "Show this help",
-                            "exit": "Exit the application"})
-                break
+            
             case _:
                 print("Unknown command. Please try again.")
 
@@ -265,16 +232,6 @@ def add_note(notebook: Notebook, name):
     notebook.add_note(name, editor.saved_content)
     console.print(f"Note '{name}' added successfully!", style="green")
 
-def view_note(notebook: Notebook, name):
-    if(not name):
-        name = input("Enter note name: ").strip()
-
-    note = notebook.get_note(name)
-    if note:
-        console.print(note)
-    else:
-        console.print(f"Note '{name}' not found.", style="red")
-
 def search_notes(notebook: Notebook, term):
     if(not term):
         term = input("Enter search term: ").strip()
@@ -285,45 +242,3 @@ def search_notes(notebook: Notebook, term):
         console.print("\n" + "─" * 50, style="dim")
         console.print(note)
 
-def edit_note(notebook: Notebook, name):
-    if(not name):
-        name = input("Enter note name: ").strip()
-    
-    note = notebook.get_note(name)
-
-    if not note:
-        console.print(f"Note '{name}' not found.", style="red")
-        return
-    
-    editor = NoteEditorApp(name, note.content)
-    editor.run()
-
-    if editor.saved_content is not None:
-        notebook.edit_note(note.name, editor.saved_content)
-        console.print(f"Note '{name}' updated successfully!", style="green")
-    else:
-        console.print(f"Note '{name}' edit cancelled.", style="yellow")
-
-
-def delete_note(notebook: Notebook, name):
-    if(not name):
-        name = input("Enter note name: ").strip()
-    
-    success = notebook.delete_note(name)
-    if success:
-        print(f"Note '{name}' deleted successfully.")
-    else:
-        print(f"Note '{name}' not found.")
-
-def list_notes(notebook: Notebook):
-    """Display notes using ListView."""
-    list_view.clear()
-    if not notebook.notes:
-        console.print("No notes found.", style="yellow")
-        return
-    
-    for note in notebook.notes:
-        item = ListItem(Label(f"{note.name}: {note.content}"))
-        list_view.add(item)
-    
-    console.print(list_view)
