@@ -1,13 +1,16 @@
 import sys
-import atexit
+from rich.console import Console
 from ..persistence.storage import save_data
+
+console = Console()
 
 def auto_save_on_error(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except KeyboardInterrupt:
-            print("\n[INFO] Program interrupted by user. Saving data before exit...")
+            console.print("\nExiting due to user interruption. Saving data before exit... Goodbye!",
+                          style="steel_blue")
             if "book" in kwargs and "notes" in kwargs:
                 save_data(kwargs["book"], kwargs["notes"])
             elif "book" in kwargs:

@@ -176,3 +176,4 @@ cython_debug/
 # Customer files
 addressbook.pkl
 notes.pkl
+.vscode

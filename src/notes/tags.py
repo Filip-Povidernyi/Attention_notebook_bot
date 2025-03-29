@@ -1,19 +1,19 @@
 from .classes.note_book import Notebook
 
 def add_tag_to_note(notebook: Notebook, note_name: str, tag: str) -> bool:
-    note = notebook.get_note(note_name)
+    note = notebook.get_note_by_name(note_name)
     if not note:
         return False
     return note.add_tag(tag)
 
 def remove_tag_from_note(notebook: Notebook, note_name: str, tag: str) -> bool:
-    note = notebook.get_note(note_name)
+    note = notebook.get_note_by_name(note_name)
     if not note:
         return False
     return note.remove_tag(tag)
 
 def view_tags_of_note(notebook: Notebook, note_name: str) -> list[str]:
-    note = notebook.get_note(note_name)
+    note = notebook.get_note_by_name(note_name)
     if not note:
         return []
     return note.view_tags()

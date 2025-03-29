@@ -1,0 +1,23 @@
+PreviewPanel {
+    width: 100%;
+    height: 100%;
+    border: solid green;
+
+    .name {
+        width: 100%;
+        text-style: bold italic;
+        content-align: center middle;
+    }
+
+    .date {
+        width: 100%;
+        content-align: center middle;
+        text-style: italic;
+        margin-bottom: 1;
+    }
+
+    .text {
+        width: 100%;
+    }
+
+}

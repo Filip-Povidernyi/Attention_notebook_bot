@@ -25,8 +25,6 @@ def contacts_main(book: ContactsBook):
     waits for user input to perform actions.
     """
 
-
-
     console = Console()
     console.print("\n\nYou are in Address Book now", style="steel_blue")
     print_help(CONTACT_MENU_COMMANDS)
@@ -35,29 +33,31 @@ def contacts_main(book: ContactsBook):
     while True:
 
         cmd = input(
-            "\nEnter a command (or 'help' for available commands): ").strip().lower()
+            "\nEnter a command (or 'help' (7) for available commands): ").strip().lower()
+        
+        if not cmd:
+            console.print("Please enter a command from the list of available commands.", 
+                          style="deep_pink4")
+            continue
 
         match cmd:
-            case "add":
+            case "add" | "1":
                 result = handlers["add"](book)
                 if result:
                     console.print(f"{result}", style="green")
                 else:
                     continue
 
-            case "delete":
+            case "delete" | "2":
                 console.print(f"{handlers["delete"](book)}", style="green")
 
-            case "show-all":
+            case "show-all" | "3":
                 handlers["show-all"](book)
 
-            case "edit":
+            case "edit" | "4":
                 console.print(f"{handlers["edit"](book)}", style="green")
 
-            case "birthdays":
-                get_upcoming_birthdays(book)
-
-            case "find":
+            case "find" | "5":
                 found_contacts = handlers["find"](book)
 
                 if found_contacts:
@@ -71,10 +71,13 @@ def contacts_main(book: ContactsBook):
                 else:
                     print("No contacts found.")
 
-            case "help":
+            case "birthdays" | "6":
+                get_upcoming_birthdays(book)
+
+            case "help" | "7":
                 print_help(CONTACT_MENU_COMMANDS)
 
-            case "back":
+            case "back" | "0":
                 print("\nGoing back to the main menu...")
                 print_help(MAIN_MENU_COMMANDS)
                 break
