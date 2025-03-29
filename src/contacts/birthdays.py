@@ -8,9 +8,7 @@ from .classes.contact import Contact
 from rich.console import Console
 from rich.table import Table
 
-
 console = Console()
-
 
 def get_upcoming_birthdays(book: ContactsBook) -> None:
     """
@@ -130,16 +128,12 @@ def print_birthday_contacts(contacts: list[Contact], start_date: date, end_date:
         return
 
     # Format the date range header
-    if start_date == end_date:
-        date_range_str = f"{start_date.strftime('%d.%m')}"
-        console.print(
-            f"\nBirthdays for Today {date_range_str}:", style="steel_blue")
-    else:
-        date_range_str = f"{start_date.strftime('%d.%m')}" \
-            f"{" (today)" if start_date == date.today() else ""}" \
-            f" - {end_date.strftime('%d.%m')}" \
-            f"{" (today)" if end_date == date.today() else ""}"
-        console.print(f"\nBirthdays for {date_range_str}:", style="steel_blue")
+    today_str = " (today)"
+    start_part = f"{start_date.strftime('%d.%m')}{today_str if start_date == date.today() else ''}"
+    end_part = f"{end_date.strftime('%d.%m')}{today_str if end_date == date.today() else ''}"
+
+    date_range_str = f"{start_part} - {end_part}" if start_date != end_date else start_part
+    console.print(f"\nBirthdays for {date_range_str}:", style="steel_blue")
 
     # Group contacts by birthday
     grouped_contacts = defaultdict(list)
@@ -147,42 +141,37 @@ def print_birthday_contacts(contacts: list[Contact], start_date: date, end_date:
         birthday_key = f"📅 {contact.birthday.value.strftime('%d.%m (%A)')}"
         grouped_contacts[birthday_key].append(contact)
 
-# Create and populate the table
-    table = Table(show_header=True, header_style="bold magenta")
-    table.add_column("Birthday date", style="cyan")
-    table.add_column("Name", style="green")
-    table.add_column("Contacts", style="yellow")
+    # Create and populate the table
+    table = Table(show_header=True, header_style="bold")
+    table.add_column("Birthday date", style="yellow")
+    table.add_column("Name", style="cyan", no_wrap=True)
+    table.add_column("Email", style="blue")
+    table.add_column("Phones", style="magenta")
+
+    max_name_length = max(
+        (len(contact.name.value) for contacts in grouped_contacts.values() for contact in contacts),
+        default=0  # Ensure it's safe in case there are no contacts
+    )
 
     for birthday_str, contacts in grouped_contacts.items():
 
         for contact in contacts:
 
-            contact_details = []
-            max_name_length = max(len(contact.name.value)
-                                  for contacts in grouped_contacts.values() for contact in contacts)
-            if contact.email:
-                contact_details.append(contact.email.value)
-            if contact.phones:
-                contact_details.extend(phone.value for phone in contact.phones)
+            birthday_date = contact.birthday.value.replace(year=date.today().year)
+            is_today = birthday_date == date.today()
 
-            details_str = ", ".join(
-                contact_details) if contact_details else "-"
+            if is_today:
+                birthday_str = f"{birthday_str} ← today"
+            
+            phones_details = []
+            if contact.phones:
+                phones_details.extend(phone.value for phone in contact.phones)
+            
             table.add_row(
-                birthday_str, f'{contact.name.value.title().ljust(max_name_length + 3) + "🎂"}', details_str)
+                birthday_str, 
+                f'{contact.name.value.title().ljust(max_name_length + 3) + "🎂"}',
+                contact.email.value if contact.email else "-",
+                ", ".join(phones_details) if phones_details else "-"
+            )
 
     console.print(table)
-    # Print grouped birthdays
-    # for birthday_str, contacts in grouped_contacts.items():
-    #     is_today = any(contact.birthday.value.replace(
-    #         year=date.today().year) == date.today() for contact in contacts)
-    #     print(f"\n📅 {birthday_str}{" - today" if is_today else ""}:")
-
-    #     for contact in contacts:
-    #         contact_details = []
-    #         if contact.email:
-    #             contact_details.append(contact.email.value)
-    #         if contact.phones:
-    #             contact_details.extend(phone.value for phone in contact.phones)
-
-    #         details_str = f" ({', '.join(contact_details)})" if contact_details else ""
-    #         print(f"    - {contact.name.value.title()}{details_str}")
