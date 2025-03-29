@@ -20,7 +20,7 @@ def print_note_table(note):
     # Контент
     text = Text(note.content or "", style="white")  # Проверка, что note.content не None
     console = Console()
-    table.add_row(text.wrap(console, width=100))
+    table.add_row(text)
 
     # Дата обновления
     if note.updated_at:
