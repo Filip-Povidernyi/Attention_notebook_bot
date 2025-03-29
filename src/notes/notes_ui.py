@@ -5,10 +5,8 @@ from rich.console import Console
 from src.notes.node_editor_ui import NoteEditor, NoteEditorApp
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
-from textual.widgets import Footer, Label, ListItem, ListView
-from textual.widgets import DataTable, Footer, Button
+from textual.widgets import Footer, Label, DataTable, Footer, Button, TextArea, Static
 from textual.containers import Grid
-from rich.text import Text
 from textual.binding import Binding
 
 """
@@ -20,7 +18,6 @@ displaying test messages and exiting the program.
 """
 
 console = Console()
-list_view = ListView()
 
 class EditorScreen(ModalScreen[str]):
     """The new screen that will be displayed dynamically."""
@@ -103,18 +100,50 @@ class AskScreen(ModalScreen[bool]):
         else:
             self.dismiss(False)
 
+class PreviewPanel(Static):
+    CSS = """
+    PreviewPanel {
+        width: 100%;
+        height: 100%;
+    }
+    """
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def compose(self) -> ComposeResult:
+        yield TextArea(read_only=True)
+        
+    def display_note(self, note: Note):
+        self.query_one(TextArea).text = note.content
+        
+
 class NotesApp(App):
     CSS = """
     Screen {
         align: center middle;
+        layers: base top;
     }
     
     #main_grid {
         grid-size: 1 2;
         grid-gutter: 1 2;
-        grid-rows: 1fr 3;
+        grid-rows: 1fr 1fr;
         padding: 0 1;
         width: 100%;
+        height: 100%;
+    }
+    
+    #table {
+        layer: base;
+        width: 1fr;
+        height: 1fr;
+    }
+    
+    #preview {
+        layer: top;
+        dock: right;
+        width: 30%;
         height: 100%;
     }
 
@@ -131,6 +160,8 @@ class NotesApp(App):
         Binding("e", "edit(True)", "Edit note", show=True),
         Binding("d", "delete", "Delete note", show=True),
         Binding("s", "search", "Search note", show=True),
+        Binding("p", "toggle_preview", "Toggle preview", show=True),
+        
         
         # Binding("t", "add_tag", "Add tag", show=True),
         # Binding("r", "remove_tag", "Remove tag", show=True),
@@ -145,10 +176,11 @@ class NotesApp(App):
         
     def compose(self) -> ComposeResult:
         yield Grid(
-            DataTable(),
-            Footer(),
+            DataTable(id="table"),
+            PreviewPanel(id="preview"),
             id="main_grid"
         )
+        yield Footer()
 
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
@@ -160,6 +192,8 @@ class NotesApp(App):
 
     def on_data_table_row_highlighted(self, e: DataTable.RowHighlighted):
         self.selected_row = e.row_key
+        preview = self.query_one("#preview", expect_type=PreviewPanel)
+        preview.display_note(self.notebook.get_note(self.selected_row))
 
     async def action_edit(self, editable: bool):
         if not self.selected_row:
@@ -199,6 +233,10 @@ class NotesApp(App):
 
         for n in notes:
             table.add_row(n.name, n.updated_at, n.content[:20], key=n.name)
+            
+    def action_toggle_preview(self):
+        preview = self.query_one("#preview", expect_type=PreviewPanel)
+        preview.visible = not preview.visible
 
 @auto_save_on_error
 def notes_main(notebook: Notebook):
