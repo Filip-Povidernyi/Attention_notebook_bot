@@ -28,7 +28,7 @@ def main():
     book, notes = load_data(PASSWORD)
 
     while book is None or notes is None:
-        print("❌ Try again with the correct password.")
+        console.print("❌ Try again with the correct password.", style="deep_pink4")
         PASSWORD = prompt_password()
         book, notes = load_data(PASSWORD)
 
