@@ -44,24 +44,28 @@ def contacts_main(book: ContactsBook):
                 result = handlers["add"](book)
                 if result:
                     console.print(f"{result}", style="green")
+                    print_help(CONTACT_MENU_COMMANDS)
                 else:
                     continue
 
             case "delete" | "2":
                 console.print(f"{handlers["delete"](book)}", style="green")
+                print_help(CONTACT_MENU_COMMANDS)
 
             case "show-all" | "3":
-                handlers["show-all"](book)
+                console.print(handlers["show-all"](book))
 
             case "edit" | "4":
-                console.print(f"{handlers["edit"](book)}", style="green")
+                result = handlers["edit"](book)
+                if result:
+                    console.print(f"{result}", style="green")
 
             case "find" | "5":
                 found_contacts = handlers["find"](book)
 
                 if found_contacts:
 
-                    handlers["show-all"](found_contacts)
+                    console.print(handlers["show-all"](found_contacts))
 
                 elif found_contacts is None:
 
@@ -77,7 +81,8 @@ def contacts_main(book: ContactsBook):
                 print_help(CONTACT_MENU_COMMANDS)
 
             case "back" | "0":
-                print("\nGoing back to the main menu...")
+                console.print("\nGoing back to the main menu...",
+                              style="steel_blue")
                 print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
