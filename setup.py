@@ -5,7 +5,7 @@ setup(
     version="1.0.5",
     authors=[
         {"name": "Natalia Khodorova", "email": "icxodnik@gmail.com"},
-        {"name": "Leskovec Maksim", "email": "leskovecmaksim@gmail.com"},
+        {"name": "Leskovets Maksym", "email": "leskovecmaksim@gmail.com"},
         {"name": "Oleksandr Romashko", "email": "alex.rmshk@gmail.com"},
         {"name": "Filip Povidernyi", "email": "p.povidernyi@gmail.com"},
     ],
@@ -19,6 +19,7 @@ setup(
         "rich",
         "textual",
         "python-dateutil",
+        "pyzipper",
     ],
     python_requires=">=3.8",
     entry_points={

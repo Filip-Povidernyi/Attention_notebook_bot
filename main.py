@@ -9,6 +9,7 @@ from src.utils.decorators import auto_save_on_error
 from src.utils.autocomplete import suggest_command
 from rich.console import Console
 from src.utils.constants import MAIN_MENU_COMMANDS
+from src.utils.password import prompt_password
 
 
 console = Console()
@@ -22,14 +23,22 @@ def main():
     This script runs the main loop, allowing users to interact with the app.
     """
 
+    PASSWORD = prompt_password()
+
+    book, notes = load_data(PASSWORD)
+
+    while book is None or notes is None:
+        print("❌ Try again with the correct password.")
+        PASSWORD = prompt_password()
+        book, notes = load_data(PASSWORD)
+
+    # Saves user's data upon normal interpreter termination
+    atexit.register(save_data, book, notes, PASSWORD)
+
     console.print("\nWelcome to your Personal Assistant!", style="steel_blue")
     console.print("How can I assist you today?\n", style="steel_blue")
     print_help(MAIN_MENU_COMMANDS)
 
-    book, notes = load_data()
-
-    # Saves user's data upon normal interpreter termination
-    atexit.register(save_data, book, notes)
 
     while True:
 
