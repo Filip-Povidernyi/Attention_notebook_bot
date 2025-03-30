@@ -71,20 +71,19 @@ def notes_main(notebook: Notebook):
                 list_notes(notebook)
 
             case "add_tag" | "6":
-                console.print(f"{handle_add_tag(notebook)}", style="green")
+                handle_add_tag(notebook)
 
             case "remove_tag" | "7":
-                console.print(f"{handle_remove_tag(notebook)}", style="green")
+                handle_remove_tag(notebook)
 
             case "view_tags" | "8":
-                console.print(f"{handle_view_tags(notebook)}", style="green")
+                handle_view_tags(notebook)
 
             case "search_tag" | "9":
-                console.print(f"{handle_search_tag(notebook)}", style="green")
+                handle_search_tag(notebook)
 
             case "sort_by_tags" | "10":
-                console.print(
-                    f"{handle_sort_by_tags(notebook)}", style="green")
+                handle_sort_by_tags(notebook)
 
             case "help" | "11":
                 print_help(NOTE_MENU_COMMANDS)
