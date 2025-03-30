@@ -12,6 +12,7 @@ FILENAMES = {
     "notes": "db/notes.pkl"
 }
 
+
 # Варіант без архівуванням та пароля:
 
 def load_data_without_password():
@@ -40,6 +41,7 @@ def save_data_without_password(book, notes):
 
 
 # Варіант із архівуванням під паролем:
+
 
 ARCHIVE_FILE = "data.zip"
 

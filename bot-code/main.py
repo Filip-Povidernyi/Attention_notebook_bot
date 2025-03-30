@@ -43,6 +43,7 @@ def main():
     console.print("How can I assist you today?\n", style="steel_blue")
     print_help(MAIN_MENU_COMMANDS)
 
+
     while True:
 
         cmd = input(

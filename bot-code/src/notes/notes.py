@@ -218,6 +218,7 @@ def handle_view_tags(notebook: Notebook):
     if not tags:
         console.print("No tags found for this note.", style="yellow")
         return
+
     title_text = Text(f"Tags for Note: {note_name}", style="bold blue", overflow="fold")  
     table = Table(title=title_text, box=ROUNDED, show_header=True, min_width=35)
     table.add_column("Tags", style="bold")
