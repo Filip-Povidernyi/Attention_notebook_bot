@@ -48,34 +48,40 @@ f4-notebook
 ### Setup Instructions
 
 1. Clone the Repository:
+   
    ```bash
    git clone https://github.com/Filip-Povidernyi/Attention_notebook_bot.git
    ```
-2. Navigate to the Project Directory:
+3. Navigate to the Project Directory:
+   
    ```bash
    cd personal-assistant
    ```
-3. Set Up a Virtual Environment:
+4. Set Up a Virtual Environment:
+   
    - For Windows:
      ```bash
      python -m venv .venv
      .\.venv\Scripts\activate
      ```
+     
    - For macOS/Linux:
      ```bash
      python3 -m venv .venv
      source .venv/bin/activate
      ```
-4. Install Dependencies:
+6. Install Dependencies:
+   
    ```
    pip install -r requirements.txt
    ```
-5. Run the Application:
+8. Run the Application:
+   
    ```bash
    python main.py
    ```
 
-#### Build Docker image
+## Build Docker image
 
 Execute the following command in the project root directory to build the Docker image:
 
@@ -91,7 +97,7 @@ Then deploy the image to the dockerhub repository:
 docker push icxodnik988/f4-notebook
 ```
 
-## Usage
+### Usage
 
 ### Docker
 
@@ -103,23 +109,39 @@ docker push icxodnik988/f4-notebook
 docker run -it -v f4-notebook:/app/db icxodnik988/f4-notebook
 ```
 
-### Available Commands
+## Available Commands
 
-- `add-contact` — Add a new contact.
-- `show-contact` — Display a contact by name.
-- `search-contacts` — Search contacts by name, phone number, or email.
-- `edit-contact` — Edit an existing contact.
-- `delete-contact` — Delete a contact.
-- `show-all-contacts` — Display all contacts.
-- `birthday-in-days N` — Show contacts with upcoming birthdays in the next N days.
-- `add-note` — Add a new note.
-- `show-notes` — Display all notes.
-- `search-notes` — Search notes by title, content, or tags.
-- `edit-note` — Edit a note.
-- `delete-note` — Delete a note.
-- `sort-notes` — Sort notes by tag length.
-- `exit` — Exit the application.
-- `help` — Show available commands.
+### MAIN MENU COMMANDS 
+   - ```contacts (1)```: "Go to Contacts Book",
+   - ```notes    (2)```: "Go to your Notes",
+   - ```vnotes   (3)```: "Go to your Notes (UI)",
+   - ```help     (4)```: "Show this help",
+   - ```exit     (0)```: "Exit the application"
+
+
+### CONTACT MENU COMMANDS
+   - ```add       (1)```:    "Add a new contact",
+   - ```delete    (2)```:    "Delete a contact",
+   - ```show-all  (3)```:    "Show all contacts",
+   - ```edit      (4)```:    "Edit contact name, phone, etc.",
+   - ```find      (5)```:    "Find a contact",
+   - ```birthdays (6)```:    "Show upcoming birthdays",
+   - ```help      (7)```:    "Show this help",
+   - ```back      (0)```:    "Go back to the main menu"
+
+### NOTE MENU COMMANDS 
+   - ```add          (1)```:     "Add a new note (add <name>)",
+   - ```view         (2)```:     "View a note (view <name>)",
+   - ```search       (3)```:     "Search for a notes (search <term>)",
+   - ```edit         (4)```:     "Edit a note (edit <name>)",
+   - ```delete       (5)```:     "Delete a note (delete <name>)",
+   - ```add_tag      (6)```:     "Add a tag to a note",
+   - ```remove_tag   (7)```:     "Remove a tag from a note",
+   - ```view_tags    (8)```:     "View tags of a note",
+   - ```search_tag   (9)```:     "Search notes by tag (search_tag <tag>)",
+   - ```sort_by_tags (10)```:    "Sort notes by number of tags",
+   - ```help         (11)```:    "Show this help",
+   - ```back         (0)```:    "Go back to the main menu"
 
 ### Notes
 
