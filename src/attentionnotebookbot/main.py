@@ -11,6 +11,7 @@ from rich.console import Console
 from src.utils.constants import MAIN_MENU_COMMANDS
 
 
+
 console = Console()
 
 
@@ -55,7 +56,7 @@ def main():
                 print_help(MAIN_MENU_COMMANDS)
 
             case "exit" | "0":
-                console.print(f"{exit_program()}", style="steel_blue")
+                exit_program()}"
 
             case _:
 
@@ -70,8 +71,9 @@ def main():
                         f"Unknown command '{cmd}'. Please try again.", style="deep_pink4")
 
 
+
 def exit_program():
-    return "Goodbye, have a nice day!"
+    console.print("Goodbye, have a nice day!", style="steel_blue")
     sys.exit(0)
 
 

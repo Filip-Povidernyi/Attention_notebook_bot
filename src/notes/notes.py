@@ -118,7 +118,7 @@ def add_note(notebook: Notebook, name):
     while not name:
         name = input("Enter note name: ").strip()
 
-    if (notebook.get_note(name)):
+    if (notebook.get_note_by_name(name)):
         console.print(f"Note '{name}' already exists.", style="yellow")
         return
 
@@ -134,9 +134,9 @@ def view_note(notebook: Notebook, name):
     while not name:
         name = input("Enter note name: ").strip()
 
-    note = notebook.get_note(name)
+    note = notebook.get_note_by_name(name)
     if note:
-        console.print(note)
+        print_note_table(note)
     else:
         console.print(f"Note '{name}' not found.", style="red")
 
@@ -150,15 +150,14 @@ def search_notes(notebook: Notebook, term):
     console.print(
         f"\nFound {len(notes)} notes matching the term '{term}'.", style="bold blue")
     for note in notes:
-        console.print("\n" + "─" * 50, style="dim")
-        console.print(note)
+        print_note_table(note)
 
 
 def edit_note(notebook: Notebook, name):
     while not name:
         name = input("Enter note name: ").strip()
 
-    note = notebook.get_note(name)
+    note = notebook.get_note_by_name(name)
 
     if not note:
         console.print(f"Note '{name}' not found.", style="red")
