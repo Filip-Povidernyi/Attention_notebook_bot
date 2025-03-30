@@ -3,6 +3,8 @@ from .classes.contacts_book import ContactsBook
 from src.utils.autocomplete import suggest_command
 from rich.console import Console
 from rich.table import Table
+from ..utils.common import print_help
+from ..utils.constants import CONTACT_MENU_COMMANDS
 
 console = Console()
 
@@ -34,7 +36,9 @@ def add_contact(book):
             name = input("Enter a name: ").strip().lower()
 
             if name in exit_cmd:
-                return "You back to menu."
+                console.print("You back to menu.", style="green")
+                print_help(CONTACT_MENU_COMMANDS)
+                return
             elif name:
                 contact = Contact(name)
                 break
@@ -44,7 +48,9 @@ def add_contact(book):
     address = input("Enter address: ").strip().lower()
 
     if address in exit_cmd:
-        return "You back to menu."
+        console.print("You back to menu.", style="green")
+        print_help(CONTACT_MENU_COMMANDS)
+        return
     elif address:
         contact.add_address(address)
 
@@ -52,7 +58,9 @@ def add_contact(book):
         try:
             phone = input("Enter phone: ").strip().lower()
             if phone in exit_cmd:
-                return "You back to menu."
+                console.print("You back to menu.", style="green")
+                print_help(CONTACT_MENU_COMMANDS)
+                return
             elif phone:
                 contact.add_phone(phone)
                 break
@@ -65,7 +73,9 @@ def add_contact(book):
         try:
             email = input("Enter email: ").strip().lower()
             if email in exit_cmd:
-                return "You back to menu."
+                console.print("You back to menu.", style="green")
+                print_help(CONTACT_MENU_COMMANDS)
+                return
             elif email:
                 contact.add_email(email)
                 break
@@ -79,7 +89,9 @@ def add_contact(book):
             birthday = input(
                 "Enter birthday(Use DD.MM.YYYY): ").strip().lower()
             if birthday in exit_cmd:
-                return "You back to menu."
+                console.print("You back to menu.", style="green")
+                print_help(CONTACT_MENU_COMMANDS)
+                return
             elif birthday:
                 contact.add_birthday(birthday)
                 break
@@ -101,7 +113,9 @@ def delete_contact(book):
     name = input("Enter a name to delete: ").strip().lower()
 
     if name in exit_cmd:
-        return "You back to menu."
+        console.print("You back to menu.", style="green")
+        print_help(CONTACT_MENU_COMMANDS)
+        return
 
     if book.find(name):
 
@@ -112,7 +126,7 @@ def delete_contact(book):
         if confirm == "yes" or confirm == "y":
             book.delete(name)
             return f"Contact {name} deleted successfully!"
-        else:
+        elif confirm == "no" or confirm == "n":
             return "Operation canceled."
 
 
@@ -143,7 +157,7 @@ def show_all(book):
                     "%d.%m.%Y") if contact.birthday else "-"
             )
 
-        console.print(table)
+        return table
 
     elif isinstance(book, list):
         if not book:
@@ -169,10 +183,10 @@ def show_all(book):
                     "%d.%m.%Y") if contact.birthday else "-"
             )
 
-        console.print(table)
+        return table
 
 
-@input_error
+# @input_error
 def edit_contact(book):
 
     console.print(
@@ -180,18 +194,22 @@ def edit_contact(book):
     name = input("Enter a name: ").strip().lower()
 
     if name in exit_cmd:
-        return "You back to menu."
+        console.print("You back to menu.", style="green")
+        print_help(CONTACT_MENU_COMMANDS)
+        return
 
     if book.find(name):
         contact = book.data[name]
-        show_all([contact])
+        console.print(show_all([contact]))
 
         while True:
             cmd = input(
-                "\nWhat do you want to change? (name, phone, address, email, birthday): ").strip().lower()
+                "\nWhat do you want to change? (name/phone/address/email/birthday): ").strip().lower()
 
             if cmd in exit_cmd:
-                return "You back to menu."
+                console.print("You back to menu.", style="green")
+                print_help(CONTACT_MENU_COMMANDS)
+                return
 
             elif cmd == "name":
 
@@ -205,61 +223,117 @@ def edit_contact(book):
                     "Contact name changed successfully!", style="green")
 
             elif cmd == "phone":
-                cmd_phone = input(
-                    "Do you want to add, change or remove a phone? (add/change/remove): ").strip().lower()
+                while True:
+                    cmd_phone = input(
+                        "\nDo you want to add, change or remove a phone? (add/change/remove): ").strip().lower()
 
-                if cmd_phone == "add":
-                    new_phone = input("Enter a new phone: ").strip().lower()
-                    contact.add_phone(new_phone)
-                    console.print(
-                        "Contact phone added successfully!", style="green")
+                    if cmd_phone in exit_cmd:
+                        break
+                    if cmd_phone == "add":
+                        while True:
+                            new_phone = input(
+                                "Enter a new phone: ").strip().lower()
+                            if new_phone in exit_cmd:
+                                break
+                            else:
+                                try:
+                                    contact.add_phone(new_phone)
+                                    console.print(
+                                        "Contact phone added successfully!", style="green")
+                                    break
+                                except ValueError as e:
+                                    console.print(e, style="red")
 
-                elif cmd_phone == "change":
-                    old_phone = input("Enter a old phone: ").strip().lower()
-                    new_phone = input("Enter a new phone: ").strip().lower()
-                    contact.edit_phone(old_phone, new_phone)
-                    console.print(
-                        "Contact phone changed successfully!", style="green")
+                    elif cmd_phone == "change":
+                        while True:
+                            old_phone = input(
+                                "Enter a old phone: ").strip().lower()
+                            if old_phone in [p.value for p in contact.phones] and old_phone not in exit_cmd:
+                                new_phone = input(
+                                    "Enter a new phone: ").strip().lower()
+                                if new_phone in exit_cmd:
+                                    break
+                                else:
+                                    try:
+                                        contact.edit_phone(
+                                            old_phone, new_phone)
+                                        console.print(
+                                            "Contact phone changed successfully!", style="green")
+                                        break
+                                    except ValueError as e:
+                                        console.print(e, style="red")
+                            elif old_phone in exit_cmd:
+                                break
+                            else:
+                                console.print(
+                                    f"This phone namber is absent in contact {name.title()}. Try again!", style="yellow")
 
-                elif cmd_phone == "remove":
-                    rem_phone = input(
-                        "Enter a phone number for remove: ").strip().lower()
-                    contact.remove_phone(rem_phone)
-                    console.print(
-                        "Contact phone removed successfully!", style="green")
-
-                else:
-                    suggested = suggest_command(
-                        cmd_phone, ['add', 'change', 'remove'], 0.5)
-                    if suggested:
-                        console.print(
-                            f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?", style="deep_pink4")
-
+                    elif cmd_phone == "remove":
+                        rem_phone = input(
+                            "Enter a phone number for remove: ").strip().lower()
+                        if rem_phone in exit_cmd:
+                            break
+                        else:
+                            if rem_phone in [p.value for p in contact.phones]:
+                                contact.remove_phone(rem_phone)
+                                console.print(
+                                    "Contact phone removed successfully!", style="green")
+                                break
+                            else:
+                                console.print(
+                                    f"This phone namber is absent in contact {name.title()}. Try again!", style="yellow")
                     else:
-                        console.print(
-                            f"Unknown command '{cmd}'. Please try again.", style="deep_pink4")
+                        suggested = suggest_command(
+                            cmd_phone, ['add', 'change', 'remove'] + exit_cmd, 0.5)
+                        if suggested:
+                            console.print(
+                                f"Unknown command '{cmd_phone}'.\nMaybe you mean '{suggested}'?", style="deep_pink4")
+                        else:
+                            console.print(
+                                f"Unknown command '{cmd_phone}'. Please try again.", style="deep_pink4")
 
             elif cmd == "address":
-                new_address = input("Enter a new address: ").strip().lower()
-                contact.add_address(new_address)
-                console.print(
-                    "Contact address changed successfully!", style="green")
+                while True:
+                    new_address = input(
+                        "Enter a new address: ").strip().lower()
+                    if new_address in exit_cmd:
+                        break
+                    contact.add_address(new_address)
+                    console.print(
+                        "Contact address changed successfully!", style="green")
+                    break
 
             elif cmd == "email":
-                new_email = input("Enter a new email: ").strip().lower()
-                contact.add_email(new_email)
-                console.print(
-                    "Contact email changed successfully!", style="green")
+                while True:
+                    new_email = input("Enter a new email: ").strip().lower()
+                    if new_email in exit_cmd:
+                        break
+                    else:
+                        try:
+                            contact.add_email(new_email)
+                            console.print(
+                                "Contact email changed successfully!", style="green")
+                            break
+                        except ValueError as e:
+                            console.print(e, style="red")
 
             elif cmd == "birthday":
-                new_birthday = input(
-                    "Enter a new birthday(Use DD.MM.YYYY): ").strip().lower()
-                contact.add_birthday(new_birthday)
-                console.print(
-                    "Contact birthday changed successfully!", style="green")
+                while True:
+                    new_birthday = input(
+                        "Enter a new birthday(Use DD.MM.YYYY): ").strip().lower()
+                    if new_birthday in exit_cmd:
+                        break
+                    else:
+                        try:
+                            contact.add_birthday(new_birthday)
+                            console.print(
+                                "Contact birthday changed successfully!", style="green")
+                            break
+                        except ValueError as e:
+                            console.print(e, style="red")
 
             else:
-                suggested = suggest_command(cmd, list(commands.keys()), 0.5)
+                suggested = suggest_command(cmd, commands + exit_cmd, 0.5)
                 if suggested:
                     console.print(
                         f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?", style="deep_pink4")
