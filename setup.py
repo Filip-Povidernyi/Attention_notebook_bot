@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="AttentionNotebookBot",
-    version="1.0.1",
+    version="1.0.5",
     authors=[
         {"name": "Natalia Khodorova", "email": "icxodnik@gmail.com"},
         {"name": "Leskovec Maksim", "email": "leskovecmaksim@gmail.com"},
