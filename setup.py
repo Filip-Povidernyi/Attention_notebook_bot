@@ -23,7 +23,7 @@ setup(
     python_requires=">=3.8",
     entry_points={
         "console_scripts": [
-            "start-bot=main:main",
+            "start-bot=attentionnotebookbot.main:main",
         ],
     },
     classifiers=[
