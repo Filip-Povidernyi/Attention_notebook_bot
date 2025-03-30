@@ -1,5 +1,5 @@
 import os
-from src.contacts_fold.classes.contacts_book import ContactsBook
+from src.contacts.classes.contacts_book import ContactsBook
 from src.notes.classes.note_book import Notebook
 import pickle
 # import pyzipper   #Стороння бібліотека, яку використав для архівування

@@ -2,7 +2,7 @@ import sys
 import atexit
 from src.utils.common import print_help
 from src.persistence.storage import load_data, save_data
-from src.contacts_fold.contacts import contacts_main
+from src.contacts.contacts import contacts_main
 from src.notes.notes import notes_main
 from src.notes.notes_ui import notes_main as notes_main_ui
 from src.utils.decorators import auto_save_on_error
