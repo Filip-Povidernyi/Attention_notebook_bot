@@ -1,6 +1,6 @@
 from src.utils.common import print_help
 from .classes.contacts_book import ContactsBook
-from src.contacts_fold.handler import handlers
+from src.contacts.handler import handlers
 from .birthdays import get_upcoming_birthdays
 from ..utils.decorators import auto_save_on_error
 from ..utils.autocomplete import suggest_command
