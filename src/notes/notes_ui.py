@@ -160,6 +160,8 @@ class PreviewPanel(Vertical):
         yield TextArea(id="text", classes="text", read_only=True)
         
     def display_note(self, note: Note):
+        if not note:
+            return
         self.query_one("#name", expect_type=Label).update(note.name)
         self.query_one("#updated_at", expect_type=Label).update(note.updated_at.strftime("%Y-%m-%d %H:%M:%S"))
         self.query_one("#text", expect_type=TextArea).text = note.content
@@ -187,6 +189,7 @@ class NotesApp(App):
     def __init__(self, notebook: Notebook):
         super().__init__()
         self.notebook = notebook
+        self.selected_note_id = None
         
     def compose(self) -> ComposeResult:
         with Container(id="container"):
@@ -215,6 +218,8 @@ class NotesApp(App):
 
     def on_data_table_row_highlighted(self, e: DataTable.RowHighlighted):
         self.selected_note_id = e.row_key.value
+        if self.selected_note_id == None:
+            return
         preview = self.query_one("#preview", expect_type=PreviewPanel)
         preview.display_note(self.notebook.get_note(self.selected_note_id))
         
