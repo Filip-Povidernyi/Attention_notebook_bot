@@ -14,29 +14,29 @@ FILENAMES = {
 
 # Варіант без архівуванням та пароля:
 
-# def load_data():
-#     try:
-#         with open(FILENAMES["addressbook"], "rb") as f:
-#             book = pickle.load(f)
-#     except (FileNotFoundError, EOFError):
-#         book = ContactsBook()
+def load_data_without_password():
+    try:
+        with open(FILENAMES["addressbook"], "rb") as f:
+            book = pickle.load(f)
+    except (FileNotFoundError, EOFError):
+        book = ContactsBook()
 
-#     try:
-#         with open(FILENAMES["notes"], "rb") as f:
-#             notes = pickle.load(f)
-#     except (FileNotFoundError, EOFError):
-#         notes = Notebook()
+    try:
+        with open(FILENAMES["notes"], "rb") as f:
+            notes = pickle.load(f)
+    except (FileNotFoundError, EOFError):
+        notes = Notebook()
 
-#     return book, notes
+    return book, notes
 
 
-# def save_data(book, notes):
-#     os.makedirs(os.path.dirname(FILENAMES["addressbook"]), exist_ok=True)
-#     with open(FILENAMES["addressbook"], "wb") as f:
-#         pickle.dump(book, f)
-#     os.makedirs(os.path.dirname(FILENAMES["notes"]), exist_ok=True)
-#     with open(FILENAMES["notes"], "wb") as f:
-#         pickle.dump(notes, f)
+def save_data_without_password(book, notes):
+    os.makedirs(os.path.dirname(FILENAMES["addressbook"]), exist_ok=True)
+    with open(FILENAMES["addressbook"], "wb") as f:
+        pickle.dump(book, f)
+    os.makedirs(os.path.dirname(FILENAMES["notes"]), exist_ok=True)
+    with open(FILENAMES["notes"], "wb") as f:
+        pickle.dump(notes, f)
 
 
 # Варіант із архівуванням під паролем:
@@ -65,7 +65,7 @@ def save_data(book, notes, PASSWORD):
         pickle.dump(notes, f)
     temp_files.append(notes_file)
 
-    with pyzipper.AESZipFile(ARCHIVE_FILE, 'w', compression=pyzipper.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zf:   # Це саме створення ZIP-архів із шифруванням
+    with pyzipper.AESZipFile(ARCHIVE_FILE, 'w', compression=pyzipper.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zf:  
         zf.setpassword(PASSWORD)
         for file in temp_files:
             zf.write(file)
@@ -97,7 +97,6 @@ def load_data(PASSWORD):
                 return book, notes
 
         except RuntimeError:
-            print("❌ Incorrect password! Try again.")
             return None, None
         except Exception as e:
             print(f"❌ An error occurred while loading data: {e}")
