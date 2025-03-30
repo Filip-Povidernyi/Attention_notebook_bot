@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="NotebookBot",
-    version="0.0.2",
+    version="0.0.4",
     authors=[
         {"name": "Natalia Khodorova", "email": "icxodnik@gmail.com"},
         {"name": "Leskovec Maksim", "email": "leskovecmaksim@gmail.com"},
