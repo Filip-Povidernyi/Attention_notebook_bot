@@ -14,6 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Filip-Povidernyi/Attention_notebook_bot",
     packages=find_packages(where="src"),
+    package_dir={"": "src"},
     install_requires=[
         "rich",
         "textual",

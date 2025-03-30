@@ -1,6 +1,6 @@
 from src.utils.common import print_help
 from .classes.contacts_book import ContactsBook
-from src.contacts.handler import handlers
+from src.contacts_fold.handler import handlers
 from .birthdays import get_upcoming_birthdays
 from ..utils.decorators import auto_save_on_error
 from ..utils.autocomplete import suggest_command
@@ -29,14 +29,13 @@ def contacts_main(book: ContactsBook):
     console.print("\n\nYou are in Address Book now", style="steel_blue")
     print_help(CONTACT_MENU_COMMANDS)
 
-
     while True:
 
         cmd = input(
             "\nEnter a command (or 'help' (7) for available commands): ").strip().lower()
-        
+
         if not cmd:
-            console.print("Please enter a command from the list of available commands.", 
+            console.print("Please enter a command from the list of available commands.",
                           style="deep_pink4")
             continue
 
@@ -65,7 +64,7 @@ def contacts_main(book: ContactsBook):
                     handlers["show-all"](found_contacts)
 
                 elif found_contacts is None:
-                  
+
                     print("You back to menu.")
                     print_help(MAIN_MENU_COMMANDS)
                 else:
@@ -82,7 +81,8 @@ def contacts_main(book: ContactsBook):
                 print_help(MAIN_MENU_COMMANDS)
                 break
             case _:
-                suggested = suggest_command(cmd, list(CONTACT_MENU_COMMANDS.keys()), 0.5)
+                suggested = suggest_command(
+                    cmd, list(CONTACT_MENU_COMMANDS.keys()), 0.5)
                 if suggested:
                     print(
                         f"Unknown command '{cmd}'.\nMaybe you mean '{suggested}'?")
