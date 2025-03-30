@@ -36,14 +36,14 @@ Personal Assistant is a command-line application designed to help users manage t
 ## Installation
 
 local:
-pip install .
+```bash pip install . ```
 
 start:
-f4-notebook
+```bash f4-notebook ```
 
 ### Requirements
 
-- Python 3.7+
+- Python 3.12+
 
 ### Setup Instructions
 
