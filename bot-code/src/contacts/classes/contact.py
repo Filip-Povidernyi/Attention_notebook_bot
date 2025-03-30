@@ -30,7 +30,6 @@ class Contact:
         self.address = Address(address)
 
     def add_birthday(self, birthday: str):
-        print(birthday)
         self.birthday = Birthday(birthday)
 
     def edit_phone(self, old_phone: str, new_phone: str):

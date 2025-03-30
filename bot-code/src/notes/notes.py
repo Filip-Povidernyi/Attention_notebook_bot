@@ -43,8 +43,8 @@ def notes_main(notebook: Notebook):
             cmd_input = ask_command()
 
             if not cmd_input:
-                console.print("Please enter a command from the list of available commands.", 
-                            style="deep_pink4")
+                console.print("Please enter a command from the list of available commands.",
+                              style="deep_pink4")
                 continue
 
         cmd_parts = cmd_input.split(maxsplit=1)
@@ -96,8 +96,8 @@ def notes_main(notebook: Notebook):
             case _:
 
                 if not cmd:
-                    console.print("Please enter a command from the list of available commands.", 
-                                style="deep_pink4")
+                    console.print("Please enter a command from the list of available commands.",
+                                  style="deep_pink4")
                     continue
                 # Handle unknown commands
                 suggested = suggest_command(
@@ -219,13 +219,16 @@ def handle_view_tags(notebook: Notebook):
     if not tags:
         console.print("No tags found for this note.", style="yellow")
         return
-    title_text = Text(f"Tags for Note: {note_name}", style="bold blue", overflow="fold")  
-    table = Table(title=title_text, box=ROUNDED, show_header=True, min_width=35)
+    title_text = Text(
+        f"Tags for Note: {note_name}", style="bold blue", overflow="fold")
+    table = Table(title=title_text, box=ROUNDED,
+                  show_header=True, min_width=35)
     table.add_column("Tags", style="bold")
     for tag in tags:
         table.add_row(tag)
     console = Console()
     console.print(table)
+
 
 def handle_search_tag(notebook: Notebook):
     tag = input("Enter tag to search: ").strip()
@@ -236,6 +239,7 @@ def handle_search_tag(notebook: Notebook):
     console.print(f"\nNotes with tag '{tag}':", style="bold blue")
     for note in notes:
         print_note_table(note)
+
 
 def handle_sort_by_tags(notebook: Notebook):
     sorted_notes = sort_notes_by_tags(notebook)
