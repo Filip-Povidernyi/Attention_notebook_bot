@@ -198,6 +198,7 @@ class NotesApp(App):
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
         table.cursor_type = "row"
+        table.zebra_stripes = True
         
         preview = self.query_one("#preview", expect_type=PreviewPanel)
         preview.can_focus = False
