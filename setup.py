@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="NoteBotF4",
-    version="0.0.1",
+    name="NotebookBot",
+    version="0.0.4",
     authors=[
         {"name": "Natalia Khodorova", "email": "icxodnik@gmail.com"},
-        {"name": "Leskovets Maksym", "email": "leskovecmaksim@gmail.com"},
+        {"name": "Leskovec Maksim", "email": "leskovecmaksim@gmail.com"},
         {"name": "Oleksandr Romashko", "email": "alex.rmshk@gmail.com"},
         {"name": "Filip Povidernyi", "email": "p.povidernyi@gmail.com"},
     ],
@@ -13,18 +13,17 @@ setup(
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/Filip-Povidernyi/Attention_notebook_bot",
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    packages=find_packages(where="bot-code"),
+    package_dir={"": "bot-code"},
     install_requires=[
         "rich",
         "textual",
         "python-dateutil",
-        "pyzipper",
     ],
     python_requires=">=3.8",
     entry_points={
         "console_scripts": [
-            "start-bot=main:main",
+            "f4-notebook=main:main",
         ],
     },
     classifiers=[

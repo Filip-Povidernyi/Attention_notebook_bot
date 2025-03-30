@@ -35,7 +35,11 @@ Personal Assistant is a command-line application designed to help users manage t
 * The assistant attempts to analyze user input and suggest the most relevant command based on context.
 
 ## Installation
+local:
+pip install .
 
+start:
+f4-notebook
 ### Requirements
 
 * Python 3.7+
