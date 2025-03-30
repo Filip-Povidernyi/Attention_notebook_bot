@@ -1,12 +1,15 @@
+import sys
 import atexit
-from utils.common import print_help
-from persistence.storage import load_data, save_data
-from contacts_fold.contacts import contacts_main
-from notes.notes import notes_main
+from src.utils.common import print_help
+from src.persistence.storage import load_data, save_data
+from src.contacts_fold.contacts import contacts_main
+from src.notes.notes import notes_main
+from src.notes.notes_ui import notes_main as notes_main_ui
 from src.utils.decorators import auto_save_on_error
-from utils.autocomplete import suggest_command
+from src.utils.autocomplete import suggest_command
 from rich.console import Console
-from utils.constants import MAIN_MENU_COMMANDS
+from src.utils.constants import MAIN_MENU_COMMANDS
+
 
 
 console = Console()
@@ -32,21 +35,29 @@ def main():
     while True:
 
         cmd = input(
-            "\nEnter a command (or 'help' for available commands): ").strip().lower()
+            "\nEnter a command (or 'help' (3) for available commands): ").strip().lower()
+
+        if not cmd:
+            console.print("Please enter a command from the list of available commands.",
+                          style="deep_pink4")
+            continue
 
         match cmd:
-            case "ad" | "1":
+            case "contacts" | "1":
                 contacts_main(book)
 
-            case "note" | "2":
+            case "notes" | "2":
                 notes_main(notes)
 
-            case "help" | "3":
+            case "vnotes" | "3":
+                notes_main_ui(notes)
+
+            case "help" | "4":
                 print_help(MAIN_MENU_COMMANDS)
 
-            case "exit" | "4":
-                print("Goodbye, have a nice day!")
-                break
+            case "exit" | "0":
+                exit_program()}"
+
             case _:
 
                 suggested = suggest_command(
@@ -58,6 +69,12 @@ def main():
                 else:
                     console.print(
                         f"Unknown command '{cmd}'. Please try again.", style="deep_pink4")
+
+
+
+def exit_program():
+    console.print("Goodbye, have a nice day!", style="steel_blue")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
