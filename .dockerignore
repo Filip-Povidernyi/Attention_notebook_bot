@@ -2,5 +2,6 @@
 **/*
 
 !src/**/*.py
+!src/**/*.tcss
 !main.py
 !requirements.txt

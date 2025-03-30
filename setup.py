@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="AttentionNotebookBot",
-    version="1.0.0",
+    version="1.0.5",
     authors=[
         {"name": "Natalia Khodorova", "email": "icxodnik@gmail.com"},
         {"name": "Leskovec Maksim", "email": "leskovecmaksim@gmail.com"},
@@ -23,7 +23,7 @@ setup(
     python_requires=">=3.8",
     entry_points={
         "console_scripts": [
-            "start-bot=main:main",
+            "start-bot=attentionnotebookbot.main:main",
         ],
     },
     classifiers=[
