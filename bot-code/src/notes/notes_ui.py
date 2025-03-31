@@ -251,7 +251,7 @@ class NotesApp(App):
             
         def on_close(content: str):
             if content:
-                self.notebook.edit_note(note.name, content)
+                self.notebook.edit_note(note.id, content)
                 self.list(self.notebook.notes)
         
         screen = EditorScreen(note.name, note.content, editable, on_close=self.handle_editor_quit)
