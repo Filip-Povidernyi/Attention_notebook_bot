@@ -166,7 +166,7 @@ def edit_note(notebook: Notebook, name):
     editor.run()
 
     if editor.saved_content is not None:
-        notebook.edit_note(note.name, editor.saved_content)
+        notebook.edit_note(note.id, editor.saved_content)
         console.print(f"Note '{name}' updated successfully!", style="green")
     else:
         console.print(f"Note '{name}' edit cancelled.", style="yellow")
@@ -176,7 +176,12 @@ def delete_note(notebook: Notebook, name):
     while not name:
         name = input("Enter note name: ").strip()
 
-    success = notebook.delete_note(name)
+    note = notebook.get_note_by_name(name)
+    if not note:
+        console.print(f"Note '{name}' not found.", style="yellow")
+        return
+    
+    success = notebook.delete_note(note.id)
     if success:
         console.print(f"Note '{name}' deleted successfully.", style="green")
     else:
