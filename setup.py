@@ -19,6 +19,7 @@ setup(
         "rich",
         "textual",
         "python-dateutil",
+        "pyzipper",
     ],
     python_requires=">=3.8",
     entry_points={
