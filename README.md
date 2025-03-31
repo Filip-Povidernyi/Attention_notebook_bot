@@ -36,10 +36,10 @@ Personal Assistant is a command-line application designed to help users manage t
 ## Installation
 
 local:
-```bash pip install . ```
+`bash pip install . `
 
 start:
-```bash f4-notebook ```
+`bash f4-notebook `
 
 ### Requirements
 
@@ -48,37 +48,40 @@ start:
 ### Setup Instructions
 
 1. Clone the Repository:
-   
+
    ```bash
    git clone https://github.com/Filip-Povidernyi/Attention_notebook_bot.git
    ```
-3. Navigate to the Project Directory:
-   
+
+2. Navigate to the Project Directory:
+
    ```bash
    cd personal-assistant
    ```
-4. Set Up a Virtual Environment:
-   
+
+3. Set Up a Virtual Environment:
+
    - For Windows:
      ```bash
      python -m venv .venv
      .\.venv\Scripts\activate
      ```
-     
    - For macOS/Linux:
      ```bash
      python3 -m venv .venv
      source .venv/bin/activate
      ```
-6. Install Dependencies:
-   
+
+4. Install Dependencies:
+
    ```
    pip install -r requirements.txt
    ```
-8. Run the Application:
-   
+
+5. Run the Application:
+
    ```bash
-   python main.py
+   python bot-code/main.py
    ```
 
 ## Build Docker image
@@ -111,37 +114,39 @@ docker run -it -v f4-notebook:/app/db icxodnik988/f4-notebook
 
 ## Available Commands
 
-### MAIN MENU COMMANDS 
-   - ```contacts (1)```: "Go to Contacts Book",
-   - ```notes    (2)```: "Go to your Notes",
-   - ```vnotes   (3)```: "Go to your Notes (UI)",
-   - ```help     (4)```: "Show this help",
-   - ```exit     (0)```: "Exit the application"
+### MAIN MENU COMMANDS
 
+- `contacts (1)`: "Go to Contacts Book",
+- `notes    (2)`: "Go to your Notes",
+- `vnotes   (3)`: "Go to your Notes (UI)",
+- `help     (4)`: "Show this help",
+- `exit     (0)`: "Exit the application"
 
 ### CONTACT MENU COMMANDS
-   - ```add       (1)```:    "Add a new contact",
-   - ```delete    (2)```:    "Delete a contact",
-   - ```show-all  (3)```:    "Show all contacts",
-   - ```edit      (4)```:    "Edit contact name, phone, etc.",
-   - ```find      (5)```:    "Find a contact",
-   - ```birthdays (6)```:    "Show upcoming birthdays",
-   - ```help      (7)```:    "Show this help",
-   - ```back      (0)```:    "Go back to the main menu"
 
-### NOTE MENU COMMANDS 
-   - ```add          (1)```:     "Add a new note (add <name>)",
-   - ```view         (2)```:     "View a note (view <name>)",
-   - ```search       (3)```:     "Search for a notes (search <term>)",
-   - ```edit         (4)```:     "Edit a note (edit <name>)",
-   - ```delete       (5)```:     "Delete a note (delete <name>)",
-   - ```add_tag      (6)```:     "Add a tag to a note",
-   - ```remove_tag   (7)```:     "Remove a tag from a note",
-   - ```view_tags    (8)```:     "View tags of a note",
-   - ```search_tag   (9)```:     "Search notes by tag (search_tag <tag>)",
-   - ```sort_by_tags (10)```:    "Sort notes by number of tags",
-   - ```help         (11)```:    "Show this help",
-   - ```back         (0)```:    "Go back to the main menu"
+- `add       (1)`: "Add a new contact",
+- `delete    (2)`: "Delete a contact",
+- `show-all  (3)`: "Show all contacts",
+- `edit      (4)`: "Edit contact name, phone, etc.",
+- `find      (5)`: "Find a contact",
+- `birthdays (6)`: "Show upcoming birthdays",
+- `help      (7)`: "Show this help",
+- `back      (0)`: "Go back to the main menu"
+
+### NOTE MENU COMMANDS
+
+- `add          (1)`: "Add a new note (add <name>)",
+- `view         (2)`: "View a note (view <name>)",
+- `search       (3)`: "Search for a notes (search <term>)",
+- `edit         (4)`: "Edit a note (edit <name>)",
+- `delete       (5)`: "Delete a note (delete <name>)",
+- `add_tag      (6)`: "Add a tag to a note",
+- `remove_tag   (7)`: "Remove a tag from a note",
+- `view_tags    (8)`: "View tags of a note",
+- `search_tag   (9)`: "Search notes by tag (search_tag <tag>)",
+- `sort_by_tags (10)`: "Sort notes by number of tags",
+- `help         (11)`: "Show this help",
+- `back         (0)`: "Go back to the main menu"
 
 ### Notes
 
