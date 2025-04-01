@@ -37,9 +37,12 @@ Personal Assistant is a command-line application designed to help users manage t
 
 local:
 `bash pip install . `
+test.PyPI:
+bash pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ NotebookBot
 
 start:
 `bash f4-notebook `
+
 
 ### Requirements
 
